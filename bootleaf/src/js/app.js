@@ -898,7 +898,7 @@ function configureQueryWidget(){
       });
 
       var html = bootleaf.queryTemplate(layerNames);
-      resetSidebar("Query Widget", html);
+      resetSidebar("Query", html);
 
       // Seed the query field dropdown based on the selected layer
       updateQueryFields($("#queryWidgetLayer option:selected" ).val());
@@ -969,12 +969,10 @@ function updateQueryFields(layerId){
         var fieldName = query.name;
         var fieldAlias = query.alias || fieldName;
         var fieldType = query.type || "text";
-        var option = '<option value="' + fieldName + '" data-fieldtype="' + fieldType + '"';
-        if (j===0){
-          option += " selected='selected'";
-        }  
-        option += '>' + fieldAlias + "</option>"
-        
+        var fieldDefaultOperator = query.defaultOperator || "=";
+        var option = '<option value="' + fieldName + '" data-fieldtype="';
+        option += fieldType + '" + data-defaultoperator ="' + fieldDefaultOperator + '"';
+        option += '>' + fieldAlias + "</option>"        
         fieldOptions.push(option);
       }
     }
@@ -983,7 +981,7 @@ function updateQueryFields(layerId){
 
   // Update the query operator when the query field selection changes
   updateQueryOperator($("#queryWidgetField option:selected")[0]);
-   $("#queryWidgetField").off("change");
+  $("#queryWidgetField").off("change");
   $("#queryWidgetField").on("change", function(){
     updateQueryOperator(this.options[this.selectedIndex]);
   });
@@ -993,6 +991,7 @@ function updateQueryOperator(option){
   // Update the Operators dropdown on the Query widget with the applicable options for this field type
   $("#queryWidgetOperator").empty();
   $("#queryWidgetValue").val("");
+  var defaultOperator = option.dataset['defaultoperator'] || '=';
 
   var operators = [
     {"value": "=", "alias": "is"},
@@ -1014,7 +1013,12 @@ function updateQueryOperator(option){
 
   var operatorOptions = $.map( operators, function( val, i ) {
     var alias = val.alias || val.value;
-    return '<option value="' + val.value + '">' + alias + "</option>";
+    var opt = '<option value="' + val.value + '"';
+    if (defaultOperator === val.value) {
+      opt += " selected='selected'";
+    }
+    opt += '>' + alias + "</option>"
+    return opt;
   });
   $("#queryWidgetOperator").append(operatorOptions);
 
@@ -1505,7 +1509,7 @@ function runIdentifies(evt) {
       var layers = idLayer.layerConfig.layers || [];
 
       var data = {
-        "sr": bootleaf.mapWkid || 4326,
+        "srs": bootleaf.mapWkid || 4326,
         "tolerance": bootleaf.clickTolerance || 5,
         "maxAllowableOffset": idLayer.layerConfig.identify.maxAllowableOffset || 0.1,
         "returnGeometry": true,
@@ -1645,6 +1649,9 @@ function runIdentifies(evt) {
                   result.layerId = layerId;
                   result.layerName = layerName;
                   result.attributes = result.properties;
+                  if (data.crs !== undefined && data.crs.properties !== undefined && data.crs.properties.name !== undefined){
+                    result.crs = data.crs.properties.name;
+                  }
                   var value = JSON.stringify(result.attributes);
                   if (bootleaf.identifyResponse[layerId][value] === undefined) {
                     if (layerConfig.identify.maxFeatures !== undefined){
@@ -1692,10 +1699,20 @@ function displayIdentifyResult(layerId, layerName, layerConfig, result){
   }
 
   // Store the relevant details for this result against the identifyResponse object
+  var geometryType;
+  if (result.geometryType !== undefined) {
+    geometryType = result.geometryType;
+  } else if (result.geometry.type !== undefined) {
+    geometryType = result.geometry.type;
+  }
   var outFeature = {
     "geometry": result.geometry,
     "attributes": [],
-    "geometryType": result.geometryType
+    "geometryType": geometryType
+  }
+
+  if (result.crs !== undefined) {
+    outFeature.geometry.crs = result.crs;
   }
 
   bootleaf.wantedFields = [];
@@ -1849,6 +1866,8 @@ function showHighlight(feature, zoom){
   var wkid = bootleaf.mapWkid;
   if (feature.geometry.spatialReference && feature.geometry.spatialReference.wkid){
     wkid = feature.geometry.spatialReference.wkid;
+  } else if (feature.geometry.crs !== undefined) {
+    wkid = feature.geometry.crs.substr(feature.geometry.crs.length - 4);
   }
   var jsonGeometry;
 
@@ -1867,11 +1886,15 @@ function showHighlight(feature, zoom){
       "type": "Polygon",
       "coordinates": geometry.rings
     };
-  } else if (geometryType === "MultiPolygon" || geometryType === "Polygon") {
-    // TODO - the below code only fetches the first polygon object. Figure out how to fetch all
+  } else if (geometryType === "Polygon") {
     jsonGeometry = {
       "type": "Polygon",
-      "coordinates": geometry.coordinates[0]
+      "coordinates": geometry.coordinates
+    };
+  } else if (geometryType === "MultiPolygon") {
+   jsonGeometry = {
+      "type": "MultiPolygon",
+      "coordinates": geometry.coordinates
     };
   } else if (geometryType === 'esriGeometryPolyline') {
     jsonGeometry = {
