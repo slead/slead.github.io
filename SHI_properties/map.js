@@ -26,7 +26,12 @@ var properties = L.esri.Cluster.featureLayer({
   url: "https://services1.arcgis.com/XBDCraMz4XwnRrFo/arcgis/rest/services/SHI_Properties/FeatureServer/0",
   onEachFeature: function onEachFeature(feature, layer) {
     var properties = feature.properties;
-    var popupContent = "<strong>" + properties.FirstName + " (" + properties.FirstName + " " + properties.LastName + ")";
+    var popupContent = "<strong>" + properties.Name + "</strong></br>";
+    popupContent += "<table id='tblProperties'><tbody>";
+    popupContent += "<tr><td>Farmer</td><td>" + properties.FirstName + " " + properties.LastName + "</td></tr>";
+    popupContent += "<tr><td>Phase</td><td>" + properties.Phase + "</td></tr>";
+    popupContent += "<tr><td>Field Trainer</td><td>" + properties.FieldTrainer + "</td></tr>";
+    popupContent += "</tbody></table>"
     layer.bindPopup(popupContent);
   }
 }).addTo(map);
