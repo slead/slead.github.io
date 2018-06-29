@@ -1,6 +1,6 @@
 var center = [12.2, -84.9];
-center = [15.190292861412557, -87.38691151142122]
-var zoom = 11;
+// center = [15.190292861412557, -87.38691151142122]
+var zoom = 6;
 
 var tileOptions = {
   subdomains: 'abcd',
@@ -23,8 +23,20 @@ var map = new L.Map("map", {
   attributionControl: true
 });
 
+var geojsonMarkerOptions = {
+  radius: 8,
+  fillColor: "#ed752f",
+  color: "#95d6d5",
+  weight: 1,
+  opacity: 1,
+  fillOpacity: 0.8
+};
+
 var properties = L.esri.Cluster.featureLayer({
   url: "https://services1.arcgis.com/XBDCraMz4XwnRrFo/arcgis/rest/services/SHI_Properties/FeatureServer/0",
+  pointToLayer: function (feature, latlng) {
+    return L.circleMarker(latlng, geojsonMarkerOptions);
+  },
   onEachFeature: function onEachFeature(feature, layer) {
     var properties = feature.properties;
     var popupContent = "<h4>" + properties.Name + "</h4>";
