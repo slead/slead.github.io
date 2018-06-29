@@ -1,5 +1,6 @@
 var center = [12.2, -84.9];
-var zoom = 6;
+center = [15.190292861412557, -87.38691151142122]
+var zoom = 11;
 
 var tileOptions = {
   subdomains: 'abcd',
@@ -26,11 +27,15 @@ var properties = L.esri.Cluster.featureLayer({
   url: "https://services1.arcgis.com/XBDCraMz4XwnRrFo/arcgis/rest/services/SHI_Properties/FeatureServer/0",
   onEachFeature: function onEachFeature(feature, layer) {
     var properties = feature.properties;
-    var popupContent = "<strong>" + properties.Name + "</strong></br>";
+    var popupContent = "<h4>" + properties.Name + "</h4>";
     popupContent += "<table id='tblProperties'><tbody>";
-    popupContent += "<tr><td>Farmer</td><td>" + properties.FirstName + " " + properties.LastName + "</td></tr>";
-    popupContent += "<tr><td>Phase</td><td>" + properties.Phase + "</td></tr>";
-    popupContent += "<tr><td>Field Trainer</td><td>" + properties.FieldTrainer + "</td></tr>";
+    popupContent += "<tr><td>Farmer:</td><td>" + properties.FirstName + " " + properties.LastName + "</td></tr>";
+    popupContent += "<tr><td>Phase:</td><td>" + properties.Phase + "</td></tr>";
+    popupContent += "<tr><td>Trainer:</td><td>" + properties.FieldTrainer + "</td></tr>";
+    popupContent += "<tr><td>Area:</td><td>" + properties.Area + " " + properties.Units + "</td></tr>";
+    if (properties.Products !== 'N/A'){
+      popupContent += "<tr><td>Products:</td><td>" + properties.Products + "</td></tr>";
+    }
     popupContent += "</tbody></table>"
     layer.bindPopup(popupContent);
   }

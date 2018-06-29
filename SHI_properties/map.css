@@ -3,3 +3,7 @@ html, body, #map {
   width: 100%;
   overflow: hidden;
 }
+
+.leaflet-popup-content {
+  line-height: 1.0;
+}
