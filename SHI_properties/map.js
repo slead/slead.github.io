@@ -10,6 +10,16 @@ var tileOptions = {
   opacity: 0.5
 };
 var basemap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', tileOptions);
+
+var streetmap =  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2xlYWQiLCJhIjoiMzJtWVZPRSJ9.HawMu0wrhpGi1PGpqbzbMg', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+      '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    id: 'mapbox.streets',
+    opacity: 0.5
+  });
+
 var zoomControl = true;
 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
  zoomControl = false;
@@ -18,7 +28,7 @@ var map = new L.Map("map", {
   center: center,
   zoom: zoom,
   maxZoom: 13,
-  layers: [basemap],
+  layers: [streetmap],
   zoomControl: zoomControl,
   attributionControl: true
 });
