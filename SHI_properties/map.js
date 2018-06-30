@@ -30,6 +30,7 @@ var map = new L.Map("map", {
   maxZoom: 13,
   layers: [streetmap],
   zoomControl: zoomControl,
+  defaultExtentControl: true,
   attributionControl: true
 });
 
