@@ -4,6 +4,11 @@ html, body, #map {
   overflow: hidden;
 }
 
+body {
+  padding: 0;
+  margin: 0;
+}
+
 .leaflet-popup-content {
   line-height: 1.0;
 }
