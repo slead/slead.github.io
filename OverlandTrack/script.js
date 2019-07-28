@@ -20,15 +20,7 @@ require([
   }
 
   // Call the server every 5 minutes
-  // app.timer = setInterval(() => alert('tick'), 2000);
-
-  $.ajax({
-    type: "GET",
-    data: data,
-    url: "https://api.findmespot.com/spot-main-web/consumer/rest-api/2.0/public/feed/16eXyDLztlnvBYOYclTKcyfLas4rM2pvI/message"
-  })
-    .done(handleResults)
-    .catch(handleError);
+  app.timer = setInterval(fetchGPS(), 3000);
 
   // Create Map
   app.map = new Map({
@@ -65,12 +57,11 @@ require([
 
   // Huts
   var hutLabels = {
-    // autocasts as new LabelClass()
     symbol: {
-      type: "text",  // autocasts as new TextSymbol()
+      type: "text",
       color: "#727272",
       haloColor: "black",
-      font: {  // autocast as new Font()
+      font: {
         family: "Playfair Display",
         size: 12,
         weight: "bold"
@@ -111,15 +102,23 @@ require([
     ]
   };
 
-  // app.graphicsLayer = new GraphicsLayer({
-  //   opacity: 0.5
-  // });
-  // app.map.add(app.graphicsLayer);
-
   function zoomToLayer(layer) {
     return layer.queryExtent().then(function(response) {
       app.view.goTo(response.extent);
     });
+  }
+
+  function fetchGPS(){
+    console.log("fetch");
+
+    // $.ajax({
+    //   type: "GET",
+    //   data: data,
+    //   url: "https://api.findmespot.com/spot-main-web/consumer/rest-api/2.0/public/feed/16eXyDLztlnvBYOYclTKcyfLas4rM2pvI/message"
+    // })
+    //   .done(handleResults)
+    //   .catch(handleError);
+
   }
 
   function handleResults(results){
