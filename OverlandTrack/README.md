@@ -7,3 +7,5 @@ The [default map](https://share.findmespot.com/shared/faces/viewspots.jsp?glId=1
 In this demo, the huts and walking track polylines for the Overland Track have been added.
 
 Every 2.5 minutes the app clears the previous GPS positions, then fetches the latest positions from the SPOT feed. There is an option to ignore values before the specified `startDate` date, which should be in the format `YYYY-MM-DD`.
+
+![Overland Track map](https://i.imgur.com/r2Iw6Q2.jpg "Overland Track")
