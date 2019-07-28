@@ -2,7 +2,7 @@
 
 This map takes the feed from the [SPOT Gen3 personal tracker](https://au.findmespot.com/en/index.php?cid=100) and adds it to an ArcGIS Server 3D web scene.
 
-The default application from SPOT is pretty limited, so this app takes the AJAX feed used by the default map and creates a near-real-time view of the user's current position.
+The [default map](https://share.findmespot.com/shared/faces/viewspots.jsp?glId=16eXyDLztlnvBYOYclTKcyfLas4rM2pvI) from SPOT (password: `password`) is pretty limited, so this app takes the [AJAX feed](https://api.findmespot.com/spot-main-web/consumer/rest-api/2.0/public/feed/16eXyDLztlnvBYOYclTKcyfLas4rM2pvI/message) used by the default map and creates a near-real-time view of the user's current position.
 
 In this demo, the huts and walking track polylines for the Overland Track have been added.
 
