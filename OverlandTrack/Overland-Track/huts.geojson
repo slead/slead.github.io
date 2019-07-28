@@ -1,0 +1,171 @@
+{
+"type": "FeatureCollection",
+"crs": {
+"type": "name",
+"properties": {
+"name": "EPSG:4326"
+}
+},
+"features": [
+{
+"type": "Feature",
+"id": 1,
+"geometry": {
+"type": "Point",
+"coordinates": [
+145.9450402,
+-41.7145685
+]
+},
+"properties": {
+"OBJECTID": 1,
+"GlobalID": "e1e8931f-b623-4224-a345-6a90db380a63",
+"CreationDate": 1564269658000,
+"Creator": "stephen.lead_fe",
+"EditDate": 1564269658000,
+"Editor": "stephen.lead_fe",
+"name": "Waterfall Valley Hut"
+}
+},
+{
+"type": "Feature",
+"id": 2,
+"geometry": {
+"type": "Point",
+"coordinates": [
+145.954179,
+-41.7716503
+]
+},
+"properties": {
+"OBJECTID": 2,
+"GlobalID": "c63f5c07-1968-42a2-bbf1-528e96fab9d7",
+"CreationDate": 1564269761000,
+"Creator": "stephen.lead_fe",
+"EditDate": 1564269761000,
+"Editor": "stephen.lead_fe",
+"name": "Windermere Hut"
+}
+},
+{
+"type": "Feature",
+"id": 3,
+"geometry": {
+"type": "Point",
+"coordinates": [
+146.0441703,
+-41.829592
+]
+},
+"properties": {
+"OBJECTID": 3,
+"GlobalID": "e2aeee27-f041-4b6d-b591-a3dbe862664b",
+"CreationDate": 1564269798000,
+"Creator": "stephen.lead_fe",
+"EditDate": 1564269798000,
+"Editor": "stephen.lead_fe",
+"name": "New Pelion Hut"
+}
+},
+{
+"type": "Feature",
+"id": 4,
+"geometry": {
+"type": "Point",
+"coordinates": [
+146.079617,
+-41.8917263
+]
+},
+"properties": {
+"OBJECTID": 4,
+"GlobalID": "b3906fbe-d844-4cd5-a06d-67ee134d1f6e",
+"CreationDate": 1564269835000,
+"Creator": "stephen.lead_fe",
+"EditDate": 1564269835000,
+"Editor": "stephen.lead_fe",
+"name": "Kia Ora Hut"
+}
+},
+{
+"type": "Feature",
+"id": 5,
+"geometry": {
+"type": "Point",
+"coordinates": [
+146.0867071,
+-41.9321929
+]
+},
+"properties": {
+"OBJECTID": 5,
+"GlobalID": "47fe712c-d5d1-4987-b10b-0bc060ec5b6d",
+"CreationDate": 1564269870000,
+"Creator": "stephen.lead_fe",
+"EditDate": 1564269870000,
+"Editor": "stephen.lead_fe",
+"name": "Bert Nichols Hut"
+}
+},
+{
+"type": "Feature",
+"id": 6,
+"geometry": {
+"type": "Point",
+"coordinates": [
+146.1355359,
+-42.0437628
+]
+},
+"properties": {
+"OBJECTID": 6,
+"GlobalID": "e4482e15-fee5-44e4-bb81-61c46a7f65e3",
+"CreationDate": 1564269917000,
+"Creator": "stephen.lead_fe",
+"EditDate": 1564269917000,
+"Editor": "stephen.lead_fe",
+"name": "Echo Point Hut"
+}
+},
+{
+"type": "Feature",
+"id": 7,
+"geometry": {
+"type": "Point",
+"coordinates": [
+146.172813,
+-42.1163318
+]
+},
+"properties": {
+"OBJECTID": 7,
+"GlobalID": "616445b2-4ffa-4ff8-bf98-1b4c061bba50",
+"CreationDate": 1564269964000,
+"Creator": "stephen.lead_fe",
+"EditDate": 1564269964000,
+"Editor": "stephen.lead_fe",
+"name": "Lake St Claire Lodge"
+}
+},
+{
+"type": "Feature",
+"id": 8,
+"geometry": {
+"type": "Point",
+"coordinates": [
+145.9366273,
+-41.579149
+]
+},
+"properties": {
+"OBJECTID": 8,
+"GlobalID": "46733976-006b-4cf4-90a9-fc7bb19eddf5",
+"CreationDate": 1564270013000,
+"Creator": "stephen.lead_fe",
+"EditDate": 1564270013000,
+"Editor": "stephen.lead_fe",
+"name": "Cradle Mountain Wilderness Village"
+}
+}
+]
+}
