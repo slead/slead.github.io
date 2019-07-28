@@ -6,16 +6,21 @@ require([
   "esri/layers/SceneLayer",
   "esri/layers/GeoJSONLayer",
   "esri/widgets/BasemapToggle",
-  "esri/layers/GraphicsLayer",
+  "esri/layers/FeatureLayer",
   "esri/Graphic",
-  "esri/PopupTemplate"
-], function(Map, SceneView, SceneLayer, GeoJSONLayer, BasemapToggle, GraphicsLayer, Graphic, PopupTemplate) {
+  "esri/PopupTemplate",
+  "esri/widgets/Home"
+], function(Map, SceneView, SceneLayer, GeoJSONLayer, BasemapToggle, FeatureLayer, Graphic, PopupTemplate, Home) {
 
+  // Configure the connection to the SPOT server
   var data = {
     'license': null,
     'expiryDate': null,
     'feedPassword': 'password'
   }
+
+  // Call the server every 5 minutes
+  // app.timer = setInterval(() => alert('tick'), 2000);
 
   $.ajax({
     type: "GET",
@@ -39,6 +44,11 @@ require([
     zoom: 6
   });
 
+  app.homeWidget = new Home({
+    view: app.view
+  });
+  app.view.ui.add(app.homeWidget, "top-left");
+
   // Basemap toggle
   var toggle = new BasemapToggle({
     view: app.view,
@@ -58,7 +68,7 @@ require([
     // autocasts as new LabelClass()
     symbol: {
       type: "text",  // autocasts as new TextSymbol()
-      color: "green",
+      color: "#727272",
       haloColor: "black",
       font: {  // autocast as new Font()
         family: "Playfair Display",
@@ -101,16 +111,10 @@ require([
     ]
   };
 
-  app.popupTemplate = {
-    // autocasts as new PopupTemplate()
-    title: "Population in {NAME}",
-    content: "{latitude} {longitude}"
-  }
-
-  app.graphicsLayer = new GraphicsLayer({
-    opacity: 0.5
-  });
-  app.map.add(app.graphicsLayer);
+  // app.graphicsLayer = new GraphicsLayer({
+  //   opacity: 0.5
+  // });
+  // app.map.add(app.graphicsLayer);
 
   function zoomToLayer(layer) {
     return layer.queryExtent().then(function(response) {
@@ -119,17 +123,19 @@ require([
   }
 
   function handleResults(results){
+    // Create an array of graphics from the GPS points, and use that to build a feature layer
     try {
 
+      var graphics = []
       var messages = results.response.feedMessageResponse.messages.message;
       for (var i=0; i < messages.length; i++){
         var message = messages[i];
         var latitude = message.latitude;
         var longitude = message.longitude;
-        var timestamp = message.dateTime;
-        console.log(latitude, longitude, timestamp);
+        var timestamp = moment(message.dateTime).format('Do MMMM YYYY, h:mm:ss a')
+
         var point = {
-          type: "point", // autocasts as new Point()
+          type: "point",
           x: longitude,
           y: latitude
         };
@@ -137,11 +143,49 @@ require([
         var pointGraphic = new Graphic({
           geometry: point,
           symbol: app.objectSymbol,
-          popupTemplate: app.popupTemplate
+          attributes: {
+            "timestamp": timestamp,
+            "latitude": latitude,
+            "longitude": longitude
+          }
         });
+        graphics.push(pointGraphic)
 
-        app.graphicsLayer.add(pointGraphic);
       }
+
+      var popupTemplate = {
+        title: "Recorded at {timestamp}",
+        content: "Position: {latitude},{longitude}"
+      }
+
+      var gpsRenderer = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          size: 8,
+          //color: [0, 255, 255],
+          color: "#0000A0",
+          outline: null
+        }
+      };
+
+      // Build the GPS points layer
+      app.gpsLayer = new FeatureLayer({
+        fields: [
+          {name: "ObjectID", type: "oid"},
+          {name: "timestamp", type: "string"},
+          {name: "latitude", type: "double"},
+          {name: "longitude", type: "double"},
+        ],
+
+        objectIdField: "ObjectID",
+        geometryType: "point",
+        spatialReference: { wkid: 4326 },
+        source: graphics,
+        popupTemplate: popupTemplate,
+        renderer: gpsRenderer  // UniqueValueRenderer based on `type` attribute
+      });
+      app.map.add(app.gpsLayer);
 
     } catch(error){
       handleError(error);
