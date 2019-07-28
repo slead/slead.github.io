@@ -1,4 +1,7 @@
-var app = {};
+var app = {
+  startDate: '2019-07-28',
+  graphics: []
+};
 
 require([
   "esri/Map",
@@ -20,7 +23,8 @@ require([
   }
 
   // Call the server every 5 minutes
-  app.timer = setInterval(fetchGPS(), 3000);
+  fetchGPS();
+  app.timer = setInterval(fetchGPS, 15000);
 
   // Create Map
   app.map = new Map({
@@ -51,7 +55,8 @@ require([
   // Overland track route
   app.RouteLayer = new GeoJSONLayer({
      url: "./Overland-Track/tracks.geojson",
-     geometryType: 'polyline'
+     geometryType: 'polyline',
+     id: "routes"
   });
   app.map.add(app.RouteLayer);
 
@@ -76,12 +81,13 @@ require([
   app.HutsLayer = new GeoJSONLayer({
      url: "./Overland-Track/huts.geojson",
      geometryType: 'point',
-     labelingInfo: [hutLabels]
+     labelingInfo: [hutLabels],
+     id: 'huts'
   });
   app.map.add(app.HutsLayer);
 
   app.RouteLayer.when(function() {
-    zoomToLayer(app.RouteLayer);
+    //zoomToLayer(app.RouteLayer);
   });
 
   // Create objectSymbol and add to renderer
@@ -109,15 +115,15 @@ require([
   }
 
   function fetchGPS(){
-    console.log("fetch");
+    console.log("fetch GPS points");
 
-    // $.ajax({
-    //   type: "GET",
-    //   data: data,
-    //   url: "https://api.findmespot.com/spot-main-web/consumer/rest-api/2.0/public/feed/16eXyDLztlnvBYOYclTKcyfLas4rM2pvI/message"
-    // })
-    //   .done(handleResults)
-    //   .catch(handleError);
+    $.ajax({
+      type: "GET",
+      data: data,
+      url: "https://api.findmespot.com/spot-main-web/consumer/rest-api/2.0/public/feed/16eXyDLztlnvBYOYclTKcyfLas4rM2pvI/message"
+    })
+      .done(handleResults)
+      .catch(handleError);
 
   }
 
@@ -125,30 +131,35 @@ require([
     // Create an array of graphics from the GPS points, and use that to build a feature layer
     try {
 
-      var graphics = []
       var messages = results.response.feedMessageResponse.messages.message;
       for (var i=0; i < messages.length; i++){
         var message = messages[i];
-        var latitude = message.latitude;
-        var longitude = message.longitude;
-        var timestamp = moment(message.dateTime).format('Do MMMM YYYY, h:mm:ss a')
 
-        var point = {
-          type: "point",
-          x: longitude,
-          y: latitude
-        };
+        // Remove any points prior to the starting date
+        var dateTime = moment(message.dateTime).format('YYYY-MM-DD');
+        if (dateTime >= app.startDate) {
 
-        var pointGraphic = new Graphic({
-          geometry: point,
-          symbol: app.objectSymbol,
-          attributes: {
-            "timestamp": timestamp,
-            "latitude": latitude,
-            "longitude": longitude
-          }
-        });
-        graphics.push(pointGraphic)
+          var latitude = message.latitude;
+          var longitude = message.longitude;
+          var timestamp = moment(message.dateTime).format('D MMMM YYYY, h:mm:ss a');
+
+          var point = {
+            type: "point",
+            x: longitude,
+            y: latitude
+          };
+
+          var pointGraphic = new Graphic({
+            geometry: point,
+            symbol: app.objectSymbol,
+            attributes: {
+              "timestamp": timestamp,
+              "latitude": latitude,
+              "longitude": longitude
+            }
+          });
+          app.graphics.push(pointGraphic);
+        }
 
       }
 
@@ -169,22 +180,30 @@ require([
       };
 
       // Build the GPS points layer
+      try{
+        app.map.remove(app.gpsLayer);
+        var blah = 0;
+      } catch(err) {
+        console.log("unable to remove GPS layer")
+      }
       app.gpsLayer = new FeatureLayer({
         fields: [
           {name: "ObjectID", type: "oid"},
           {name: "timestamp", type: "string"},
+          {name: "dateTime", type: "date"},
           {name: "latitude", type: "double"},
           {name: "longitude", type: "double"},
         ],
-
+        id: 'GPSlayer',
         objectIdField: "ObjectID",
         geometryType: "point",
         spatialReference: { wkid: 4326 },
-        source: graphics,
+        source: app.graphics,
         popupTemplate: popupTemplate,
-        renderer: gpsRenderer  // UniqueValueRenderer based on `type` attribute
+        renderer: gpsRenderer
       });
       app.map.add(app.gpsLayer);
+
 
     } catch(error){
       handleError(error);
