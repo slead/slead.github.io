@@ -24,7 +24,7 @@ require([
 
   // Call the server every 5 minutes
   fetchGPS();
-  app.timer = setInterval(fetchGPS, 15000);
+  app.timer = setInterval(fetchGPS, 150000);
 
   // Create Map
   app.map = new Map({
