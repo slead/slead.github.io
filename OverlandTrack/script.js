@@ -24,7 +24,7 @@ require([
 
   // Call the server every 5 minutes
   fetchGPS();
-  app.timer = setInterval(fetchGPS, 150000);
+  app.timer = setInterval(fetchGPS, 15000);
 
   // Create Map
   app.map = new Map({
@@ -53,10 +53,20 @@ require([
   app.view.ui.add(toggle, "top-right");
 
   // Overland track route
+  var routeRenderer = {
+    type: "simple", // autocasts as new SimpleRenderer()
+    symbol: {
+      type: "simple-line",
+      width: 3,
+      color: [255, 170, 0, 1]
+    }
+  };
+
   app.RouteLayer = new GeoJSONLayer({
      url: "./Overland-Track/tracks.geojson",
      geometryType: 'polyline',
-     id: "routes"
+     id: "routes",
+     renderer: routeRenderer
   });
   app.map.add(app.RouteLayer);
 
@@ -87,7 +97,7 @@ require([
   app.map.add(app.HutsLayer);
 
   app.RouteLayer.when(function() {
-    //zoomToLayer(app.RouteLayer);
+    zoomToLayer(app.RouteLayer);
   });
 
   // Create objectSymbol and add to renderer
