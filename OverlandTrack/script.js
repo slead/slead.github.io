@@ -5,6 +5,8 @@ var app = {
 
 require([
   "esri/Map",
+  "esri/WebScene",
+  "esri/webscene/Slide",
   "esri/views/SceneView",
   "esri/layers/SceneLayer",
   "esri/layers/GeoJSONLayer",
@@ -13,7 +15,7 @@ require([
   "esri/Graphic",
   "esri/PopupTemplate",
   "esri/widgets/Home"
-], function(Map, SceneView, SceneLayer, GeoJSONLayer, BasemapToggle, FeatureLayer, Graphic, PopupTemplate, Home) {
+], function(Map, WebScene, Slide, SceneView, SceneLayer, GeoJSONLayer, BasemapToggle, FeatureLayer, Graphic, PopupTemplate, Home) {
 
   // Configure the connection to the SPOT server
   var data = {
@@ -26,19 +28,33 @@ require([
   fetchGPS();
   app.timer = setInterval(fetchGPS, 15000);
 
-  // Create Map
-  app.map = new Map({
-    basemap: "topo",
-    ground: "world-elevation"
+  app.scene = new WebScene({
+    portalItem: { // autocasts as new PortalItem()
+      id: "3d23afef08a841d2b6b86c44e1cc5483"  // ID of the WebScene on arcgis.com
+    }
   });
 
   // Create the SceneView
   app.view = new SceneView({
     container: "viewDiv",
-    map: app.map,
+    map: app.scene,
     center: [146.633,-42.103],
     zoom: 6
   });
+
+    app.view.when(function() {
+      $("#slidesDiv").fadeIn('slow');
+      var slides = app.scene.presentation.slides;
+      slides.forEach(createSlideUI);
+
+      // Try to navigate to the first slide
+      try{
+        setTimeout(function(){ app.scene.presentation.slides.items[0].applyTo(app.view); }, 3000);
+      } catch(err){
+        console.log("Error navigating to the first slide");
+      }
+
+    });
 
   app.homeWidget = new Home({
     view: app.view
@@ -51,54 +67,6 @@ require([
     nextBasemap: "satellite"
   });
   app.view.ui.add(toggle, "top-right");
-
-  // Overland track route
-  var routeRenderer = {
-    type: "simple", // autocasts as new SimpleRenderer()
-    symbol: {
-      type: "simple-line",
-      width: 3,
-      color: [255, 170, 0, 1]
-    }
-  };
-
-  app.RouteLayer = new GeoJSONLayer({
-     url: "./Overland-Track/tracks.geojson",
-     geometryType: 'polyline',
-     id: "routes",
-     renderer: routeRenderer
-  });
-  app.map.add(app.RouteLayer);
-
-  // Huts
-  var hutLabels = {
-    symbol: {
-      type: "text",
-      color: "#727272",
-      haloColor: "black",
-      font: {
-        family: "Playfair Display",
-        size: 12,
-        weight: "bold"
-      }
-    },
-    labelPlacement: "above-center",
-    labelExpressionInfo: {
-      expression: "$feature.name"
-    }
-  };
-
-  app.HutsLayer = new GeoJSONLayer({
-     url: "./Overland-Track/huts.geojson",
-     geometryType: 'point',
-     labelingInfo: [hutLabels],
-     id: 'huts'
-  });
-  app.map.add(app.HutsLayer);
-
-  app.RouteLayer.when(function() {
-    zoomToLayer(app.RouteLayer);
-  });
 
   // Create objectSymbol and add to renderer
   app.objectSymbol = {
@@ -117,12 +85,6 @@ require([
       }
     ]
   };
-
-  function zoomToLayer(layer) {
-    return layer.queryExtent().then(function(response) {
-      app.view.goTo(response.extent);
-    });
-  }
 
   function fetchGPS(){
     console.log("fetch GPS points");
@@ -191,8 +153,7 @@ require([
 
       // Build the GPS points layer
       try{
-        app.map.remove(app.gpsLayer);
-        var blah = 0;
+        app.scene.remove(app.gpsLayer);
       } catch(err) {
         console.log("unable to remove GPS layer")
       }
@@ -212,8 +173,7 @@ require([
         popupTemplate: popupTemplate,
         renderer: gpsRenderer
       });
-      app.map.add(app.gpsLayer);
-
+      app.scene.add(app.gpsLayer);
 
     } catch(error){
       handleError(error);
@@ -222,6 +182,39 @@ require([
 
   function handleError(error) {
     console.log("Error: ", error)
+  }
+
+  function createSlideUI(slide, placement) {
+    var slideElement = document.createElement("div");
+    slideElement.id = slide.id;
+    slideElement.classList.add("slide");
+
+    var slidesDiv = document.getElementById("slidesDiv");
+    if (placement === "first") {
+      slidesDiv.insertBefore(slideElement, slidesDiv.firstChild);
+    } else {
+      slidesDiv.appendChild(slideElement);
+    }
+
+    var title = document.createElement("div");
+    title.innerText = slide.title.text;
+    slideElement.appendChild(title);
+
+    var img = new Image();
+    img.src = slide.thumbnail.url;
+    img.title = slide.title.text;
+    slideElement.appendChild(img);
+
+    slideElement.addEventListener("click", function() {
+      var slides = document.querySelectorAll(".slide");
+      Array.from(slides).forEach(function(node) {
+        node.classList.remove("active");
+      });
+
+      slideElement.classList.add("active");
+
+      slide.applyTo(app.view);
+    });
   }
 
 });

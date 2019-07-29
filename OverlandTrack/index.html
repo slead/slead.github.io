@@ -8,6 +8,7 @@
     />
     <title>Where are Steve, Nick and Shu?</title>
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://js.arcgis.com/4.12/esri/themes/light/main.css"/>
     <link rel="stylesheet" href="./style.css"/>
 
@@ -15,7 +16,34 @@
   </head>
 
   <body>
-    <div id="viewDiv"></div>
+
+    <div id="mainContainer" class="container-fluid">
+      <div id="mainRow" class="row">
+        <nav class="hidden-sm-down col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <h4 class="text-center text-muted top-50">
+              About this map
+            </h4>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Steve, Nick and Shu are walking Tasmania's Overland Track in winter. Why? Why not.<br><br>We're taking a GPS so if the technology works, you can follow along in real time. Our planned schedule is shown below - click on a bookmark to zoom to that day's planned route.<br><br>Map built by <a href="http://www.stephenlead.com/">Steve</a>.</span>
+            </h6>
+
+            <div id="slidesDiv">
+              <h4 class="text-center text-muted top-25">
+                <span>Schedule</span>
+              </h4>
+            </div>
+
+
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-10">
+          <div id="viewDiv"></div>
+        </main>
+      </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
