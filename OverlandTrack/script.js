@@ -1,5 +1,5 @@
 var app = {
-  startDate: '2019-07-29',
+  startDate: '2019-07-20',
   graphics: []
 };
 
@@ -70,35 +70,18 @@ require([
   });
   app.view.ui.add(toggle, "top-right");
 
-  // Create objectSymbol and add to renderer
-  app.objectSymbol = {
-    type: "point-3d", // autocasts as new PointSymbol3D()
-    symbolLayers: [
-      {
-        type: "object", // autocasts as new ObjectSymbol3DLayer()
-        width: 250,
-        height: 250,
-        resource: {
-          primitive: "sphere"
-        },
-        material: {
-          color: "#FFD700"
-        }
-      }
-    ]
-  };
-
   app.gpsRenderer = {
     type: "class-breaks",
     field: "hours",
-    legendOptions: {
-      title: "Magnitude"
-    },
     defaultSymbol: {
       type: "simple-marker",
-      style: "square",
-      color: "blue",
-      size: "8px"
+      style: "circle",
+      color: "#727272",
+      size: "18px",
+      outline: {
+        color: "#e9e9e9",
+        width: 1
+      }
     },
     defaultLabel: "no data",
     classBreakInfos: [
@@ -108,8 +91,12 @@ require([
         symbol: {
           type: "simple-marker",
           style: "circle",
-          color: "#0000FF",
-          size: "16px"
+          color: "#FF2000",
+          size: "18px",
+          outline: {
+            color: "#e9e9e9",
+            width: 1
+          }
         }
       },
       {
@@ -118,8 +105,12 @@ require([
         symbol: {
           type: "simple-marker",
           style: "circle",
-          color: "#0000CD",
-          size: "14px"
+          color: "#FF4000",
+          size: "16px",
+          outline: {
+            color: "#e9e9e9",
+            width: 1
+          }
         }
       },
       {
@@ -128,8 +119,12 @@ require([
         symbol: {
           type: "simple-marker",
           style: "circle",
-          color: "#00008B",
-          size: "12px"
+          color: "#FF5000",
+          size: "14px",
+          outline: {
+            color: "#e9e9e9",
+            width: 1
+          }
         }
       },
       {
@@ -138,8 +133,12 @@ require([
         symbol: {
           type: "simple-marker",
           style: "circle",
-          color: "#000080",
-          size: "10px"
+          color: "#FF7000",
+          size: "12px",
+          outline: {
+            color: "#e9e9e9",
+            width: 1
+          }
         }
       },
       {
@@ -148,8 +147,12 @@ require([
         symbol: {
           type: "simple-marker",
           style: "circle",
-          color: "#191970",
-          size: "6px"
+          color: "#FF8B00",
+          size: "10px",
+          outline: {
+            color: "#e9e9e9",
+            width: 1
+          }
         }
       }
     ]
@@ -171,6 +174,9 @@ require([
   function handleResults(results){
     // Create an array of graphics from the GPS points, and use that to build a feature layer
     try {
+
+      // Clear the existing graphics
+      app.graphics = [];
 
       var messages = results.response.feedMessageResponse.messages.message;
       for (var i=0; i < messages.length; i++){
