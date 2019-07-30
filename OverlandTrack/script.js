@@ -1,5 +1,5 @@
 var app = {
-  startDate: '2019-07-28',
+  startDate: '2019-07-29',
   graphics: []
 };
 
@@ -9,13 +9,13 @@ require([
   "esri/webscene/Slide",
   "esri/views/SceneView",
   "esri/layers/SceneLayer",
-  "esri/layers/GeoJSONLayer",
   "esri/widgets/BasemapToggle",
   "esri/layers/FeatureLayer",
   "esri/Graphic",
   "esri/PopupTemplate",
-  "esri/widgets/Home"
-], function(Map, WebScene, Slide, SceneView, SceneLayer, GeoJSONLayer, BasemapToggle, FeatureLayer, Graphic, PopupTemplate, Home) {
+  "esri/widgets/Home",
+  "esri/renderers/ClassBreaksRenderer"
+], function(Map, WebScene, Slide, SceneView, SceneLayer, BasemapToggle, FeatureLayer, Graphic, PopupTemplate, Home, ClassBreaksRenderer) {
 
   // Configure the connection to the SPOT server
   var data = {
@@ -25,8 +25,7 @@ require([
   }
 
   // Call the server every 5 minutes
-  fetchGPS();
-  app.timer = setInterval(fetchGPS, 15000);
+  app.timer = setInterval(fetchGPS, 300000);
 
   app.scene = new WebScene({
     portalItem: { // autocasts as new PortalItem()
@@ -49,7 +48,10 @@ require([
 
       // Try to navigate to the first slide
       try{
-        setTimeout(function(){ app.scene.presentation.slides.items[0].applyTo(app.view); }, 3000);
+        setTimeout(function(){
+          app.scene.presentation.slides.items[0].applyTo(app.view);
+          fetchGPS();
+        }, 3000);
       } catch(err){
         console.log("Error navigating to the first slide");
       }
@@ -86,6 +88,73 @@ require([
     ]
   };
 
+  app.gpsRenderer = {
+    type: "class-breaks",
+    field: "hours",
+    legendOptions: {
+      title: "Magnitude"
+    },
+    defaultSymbol: {
+      type: "simple-marker",
+      style: "square",
+      color: "blue",
+      size: "8px"
+    },
+    defaultLabel: "no data",
+    classBreakInfos: [
+      {
+        minValue: 0,
+        maxValue: 1,
+        symbol: {
+          type: "simple-marker",
+          style: "circle",
+          color: "#0000FF",
+          size: "16px"
+        }
+      },
+      {
+        minValue: 1.001,
+        maxValue: 4,
+        symbol: {
+          type: "simple-marker",
+          style: "circle",
+          color: "#0000CD",
+          size: "14px"
+        }
+      },
+      {
+        minValue: 4.001,
+        maxValue: 24,
+        symbol: {
+          type: "simple-marker",
+          style: "circle",
+          color: "#00008B",
+          size: "12px"
+        }
+      },
+      {
+        minValue: 24.001,
+        maxValue: 36,
+        symbol: {
+          type: "simple-marker",
+          style: "circle",
+          color: "#000080",
+          size: "10px"
+        }
+      },
+      {
+        minValue: 36.001,
+        maxValue: 99999999999,
+        symbol: {
+          type: "simple-marker",
+          style: "circle",
+          color: "#191970",
+          size: "6px"
+        }
+      }
+    ]
+  };
+
   function fetchGPS(){
     console.log("fetch GPS points");
 
@@ -114,6 +183,20 @@ require([
           var latitude = message.latitude;
           var longitude = message.longitude;
           var timestamp = moment(message.dateTime).format('D MMMM YYYY, h:mm:ss a');
+          var day = moment(message.dateTime).format('dddd');
+
+          // Calculate the age of this point so we can symbolise it
+          var now = moment(new Date()); //todays date
+          var duration = moment.duration(now.diff(timestamp));
+          var hours = duration.asHours();
+          var age;
+          if (hours > 24) {
+            age = Math.round(duration.asDays()) + " days ago";
+          } else if (hours < 1) {
+            age = Math.round(duration.asMinutes()) + " minutes ago";
+          } else {
+            age = Math.round(duration.asHours())  + " hours ago"
+          }
 
           var point = {
             type: "point",
@@ -123,11 +206,14 @@ require([
 
           var pointGraphic = new Graphic({
             geometry: point,
-            symbol: app.objectSymbol,
+            // symbol: app.objectSymbol,
             attributes: {
               "timestamp": timestamp,
               "latitude": latitude,
-              "longitude": longitude
+              "longitude": longitude,
+              "hours": hours,
+              "age": age,
+              "day": day
             }
           });
           app.graphics.push(pointGraphic);
@@ -136,20 +222,9 @@ require([
       }
 
       var popupTemplate = {
-        title: "Recorded at {timestamp}",
+        title: "{day} {timestamp} ({age})",
         content: "Position: {latitude},{longitude}"
       }
-
-      var gpsRenderer = {
-        type: "simple", // autocasts as new SimpleRenderer()
-        symbol: {
-          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-          size: 8,
-          //color: [0, 255, 255],
-          color: "#0000A0",
-          outline: null
-        }
-      };
 
       // Build the GPS points layer
       try{
@@ -164,6 +239,9 @@ require([
           {name: "dateTime", type: "date"},
           {name: "latitude", type: "double"},
           {name: "longitude", type: "double"},
+          {name: "hours", type: "double"},
+          {name: "age", type: "string"},
+          {name: "day", type: "string"}
         ],
         id: 'GPSlayer',
         objectIdField: "ObjectID",
@@ -171,7 +249,7 @@ require([
         spatialReference: { wkid: 4326 },
         source: app.graphics,
         popupTemplate: popupTemplate,
-        renderer: gpsRenderer
+        renderer: app.gpsRenderer
       });
       app.scene.add(app.gpsLayer);
 
@@ -214,6 +292,7 @@ require([
       slideElement.classList.add("active");
 
       slide.applyTo(app.view);
+      fetchGPS();
     });
   }
 
