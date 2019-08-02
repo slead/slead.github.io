@@ -1,5 +1,6 @@
 var app = {
-  startDate: '2019-07-20',
+  // 20190802 - HS - changed start date
+  startDate: '2019-08-01',
   graphics: []
 };
 
@@ -21,7 +22,10 @@ require([
   var data = {
     'license': null,
     'expiryDate': null,
-    'feedPassword': 'password'
+    'feedPassword': 'password',
+    // 20190802 - HS - added parameters to show all points on hike, not just the default of 51 most recent points
+    'start': 0,
+    'limit' : 500
   }
 
   // Call the server every 5 minutes
