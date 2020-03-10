@@ -10,5 +10,14 @@ var config = {
     // "jr-lines-cbj1bi": "line_nam_1",
     "nonjr-named-stations-9qd9k3": "name_en",
     // "nonjr-named-lines-995u3z": "name_en"
+  },
+
+  // Station search parameters for typeahead
+  stationSearch: {
+    url: 'https://www.jrpass.com/api/stations',
+    nameField: 'name',
+    latField: 'lat',
+    longField: 'lng'
   }
+
 }
