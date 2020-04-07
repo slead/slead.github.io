@@ -1,0 +1,30 @@
+html,
+body,
+#viewDiv {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#layerToggle {
+  top: 20px;
+  right: 20px;
+  position: absolute;
+  z-index: 99;
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px;
+  opacity: 1;
+}
+
+#printWindow {
+  display: none;
+  position: absolute;
+  right: 200px;
+  top: 50px;
+  z-index: 1000;
+  width: 285px;
+  height: 300px;
+  overflow-y: scroll;
+}

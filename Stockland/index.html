@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>Printing test</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.14/esri/themes/light/main.css"/>
+    <link href="https://getbootstrap.com/docs/4.1/dist/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="./styles.css"/>
+    <style>@page { size: A4 portrait }</style>
+
+  </head>
+
+  <body>
+    <div id="viewDiv">
+      <div id="printWindow" class="draggable ui-widget-content esri-popup__main-container esri-widget esri-popup--shadow ui-draggable">
+        <header class="esri-popup__header">
+          <h2 class="draggableWidgetTitle">Print</h2>
+          <div class="esri-popup__header-buttons">
+            <div role="button" tabindex="0" class="esri-popup__button" aria-label="Close" title="Close">
+              <span aria-hidden="true" id="btnClosePrint" class="esri-popup__icon esri-icon-close"></span>
+            </div>
+          </div>
+        </header>
+        <div id="printDiv" class="form">
+          <div class="form-group row thin">
+            <label for="txtPrintTitle" class="col-md-4 dialogLabel">Title</label>
+            <input type="text" id="txtPrintTitle" class="form-control col-md-8">
+          </div>
+          <div class="form-group row thin">
+            <label for="txtPrintSubtitle" class="col-md-4 dialogLabel">Subtitle</label>
+            <input type="text" id="txtPrintSubtitle" class="form-control col-md-8">
+          </div>
+          <div class="form-group row thin">
+            <label for="cboPrintFormat" class="col-md-4 dialogLabel">Format</label>
+            <select id="cboPrintFormat" class="combobox form-control col-md-8">
+              <option value="png8" selected="selected">PNG</option>
+              <option value="pdf">PDF</option>
+              <option value="jpg">JPG</option>
+            </select>
+          </div>
+          <div class="form-group row thin">
+            <label for="cboPrintTemplate" class="col-md-4 dialogLabel">Template</label>
+            <select id="cboPrintTemplate" class="combobox form-control col-md-8">
+              <option value="RetailPrint">Retail Print</option>
+              <option value="A3PrintLegend">Internal Print</option>
+            </select>
+          </div>
+          <div class="form-group row">
+            <button id="btnPrint" class="btn btn-secondary col-md-4 offset-md-8 btn-sm">Print</button>
+          </div>
+          <div class="form-group row">
+            <span id="printMessage"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span id="layerToggle">
+      <button id="doBtn">Print Map</button>
+    </span>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script> -->
+    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script src="https://js.arcgis.com/4.14/"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
