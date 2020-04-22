@@ -1,7 +1,7 @@
 var app = {
   citiesLayer: null,
   buildingsLayer: null,
-  propExtents: {},
+  propExtents: null,
   activePropertyID: null
 };
 
@@ -14,7 +14,7 @@ require([
   "esri/webscene/Slide",
   "esri/widgets/Home",
   "esri/geometry/geometryEngine",
-  // "esri/geometry/Extent"
+  "esri/geometry/Extent"
   ], function(
   SceneView,
   Query,
@@ -24,7 +24,7 @@ require([
   Slide,
   Home,
   geometryEngine,
-  // Extent
+  Extent
 ) {
 
   // For some reason webMercatorUtils isn't available in the fetchProperties function,
@@ -94,6 +94,13 @@ require([
     if (app.buildingsLayer === null) {
       console.error("Can't find the buildings layer");
       return;
+    }
+
+    // Check for any applicable URL parameters, and run a search now if they exist
+    if (window.location.search !== '') {
+      filterProperties();
+    } else {
+      fetchProperties();
     }
 
   });
@@ -192,6 +199,21 @@ require([
     });
   }
 
+  function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+  };
+
   function fetchProperties(SouthWestLng, SouthWestLat, NorthEastLng, NorthEastLat) {
     // Retrieve the list of properties from the Investa search URL, within the current map extent
 
@@ -207,19 +229,69 @@ require([
       data: $.param(data),
       type: 'POST'
     }).done(function(response) {
-      // Once the buildings are returned from the Investa server, display them in the sidebar
+      // Once the buildings are returned from the Investa server, display them in the sidebar.
       handleQueryResults(response);
     }).catch(function(error) {
       //console.error("There was a problem")
     });
   }
 
-  function handleQueryResults(properties){
+  function filterProperties() {
+    // Retrieve the list of properties from the Investa search URL, based on the specified URL parameters
+    var dict = {
+      minspace: 'sqmMin',
+      maxspace: 'sqmMax',
+      locations: 'locations'
+    }
+
+    var data = {};
+    for (var key in dict){
+      if (getUrlParameter(key) !== undefined) {
+        data[dict[key]] = getUrlParameter(key)
+      }
+    }
+
+    $.ajax({
+      url: config.searchUrl,
+      data: $.param(data),
+      type: 'POST',
+      beforeSend: function (jqXHR) {
+        // The URL parameters may have been unusable, so don't zoom to them in that case
+        jqXHR.zoomToResults = !jQuery.isEmptyObject(data);
+      },
+    }).done(function(response, status, jqXHR) {
+      // Once the buildings are returned from the Investa server, display them in the
+      // sidebar and zoom to their combined extent
+      handleQueryResults(response, jqXHR.zoomToResults);
+    }).catch(function(error) {
+      //console.error("There was a problem")
+    });
+  }
+
+  function handleQueryResults(properties, zoomToResults){
     // Once the buildings are returned from the Investa server, display them in the sidebar
     $("#propertiesList").empty();
+    app.propExtents = null;
+
     $.each(properties, function(i, property){
       // add each property to the sidebar. In the app this will be handled by Angular so this is just a temp mockup
       var propertyID = property[config.propertyIdField];
+      var latitude = property.Latitude;
+      var longitude = property.Longitude;
+      var extent = new Extent({
+        xmin: longitude - 0.001,
+        xmax: longitude + 0.001,
+        ymin: latitude - 0.001,
+        ymax: latitude + 0.001
+      });
+      extent = app.webMercatorUtils.geographicToWebMercator(extent);
+
+      if (app.propExtents === null) {
+        app.propExtents = extent;
+      } else {
+        // union the extents to create the combined extent
+        app.propExtents = app.propExtents.union(extent);
+      }
 
       // Highlight the active building. In the Angular app, this may require another approach
       var classes = "sidebar-list-item";
@@ -246,23 +318,23 @@ require([
           if (office.Floors !== undefined && office.Floors !== undefined) {
             for (var f = 0; f < office.Floors.length; f++){
               var floor = office.Floors[f];
-                console.log('highlight floor', floor['Level'], " in building ", property.PropertyID)
+                console.log('highlight floor', floor['Name'], " in building ", property.PropertyID)
 
                 var query = app.buildingsLayer.createQuery();
-                query.where = "PropertyID =" + property.PropertyID + " and Floor='F" + floor['Level'] + "'";
+                query.where = "PropertyID =" + property.PropertyID + " and Floor='F" + floor['Name'] + "'";
                 query.outFields = ["*"];
                 app.buildingsLayer.queryFeatures(query).then(function(result){
                   app.highlight = app.layerView.highlight(result.features);
                 })
             }
           }
-
         }
-
       }
-
-
     });
+
+    if (zoomToResults) {
+      app.view.extent = app.propExtents;
+    }
 
     // When the user clicks on a sidebar item, zoom to the matching building
     $( ".sidebar-list-item" ).click(function(evt) {
