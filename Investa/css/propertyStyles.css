@@ -9,3 +9,21 @@ body {
   height: 500px;
   width: 500px;
 }
+.property-detail-level-table .property-floor-row {
+    border-bottom: 1px solid #DCDCDD;
+    padding: 8px 0;
+    font-size: 13px;
+    font-size: 1.3rem;
+    line-height: 13.8px;
+    line-height: 1.38rem;
+    cursor: pointer;
+    color: rgba(15,16,23,0.7);
+    margin-left: 0;
+    margin-right: 0;
+    font-family: "Roboto",sans-serif;
+}
+
+
+.property-detail-level-table .property-floor-row:hover, .property-floor-row.js-hovered {
+    background-color: rgba(0,132,203,0.05);
+}

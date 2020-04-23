@@ -81,7 +81,9 @@ require([
   function buildStackingPlan(slide) {
     // Zoom to this slide, and set its extent as the Home button's default extent
     slide.applyTo(app.view, {animate: false});
-    app.homeWidget.viewpoint = new Viewpoint({camera: app.view.camera})
+    app.homeWidget.viewpoint = new Viewpoint({camera: app.view.camera});
+
+    // TODO: highlight the relevant row when hovering over the floor on the map
 
     // Get a handle on the buildings layers, and adjust their query/visibility
     for (var i = 0; i < app.scene.layers.items.length; i++) {
@@ -89,9 +91,55 @@ require([
       if (layer.title !== undefined) {
         if (layer.title === config.buildingsLayerTitle){
           app.buildingsLayer = layer;
+          app.buildingsLayer.popupEnabled = false;
+
+          // Filter the buildings layer to show only the target property
           app.view.whenLayerView(app.buildingsLayer).then(function(layerView){
             console.log("filtering buildings layer")
-            layerView.layer.definitionExpression = config.propertyIdField + '=' + parseInt(app.propertyID);
+            app.buildingsLayerView = layerView;
+            app.buildingsLayerView.layer.definitionExpression = config.propertyIdField + '=' + parseInt(app.propertyID);
+
+            // Highlight the relevant floor when hovering over it in the Availability table
+            $(".property-floor-row").hover(function(evt){
+              try{
+                var floor = $(this).find(".first").data('floor');
+                console.log("highlight floor", floor);
+                if (app.highlight) {app.highlight.remove();}
+                var query = app.buildingsLayer.createQuery();
+                query.where = "PropertyID =" + app.propertyID + " and Floor='F" + floor + "'";
+                query.outFields = ["*"];
+                app.buildingsLayer.queryFeatures(query).then(function(result){
+                  if (app.highlight) {app.highlight.remove();}
+                  app.highlight = app.buildingsLayerView.highlight(result.features);
+                });
+              } catch(err) {
+                console.error("There was a problem highlighting the floor")
+              }
+            }, function() {
+              console.log("remove highlight")
+              if (app.highlight) {app.highlight.remove();}
+            });
+
+            // Listen for a click on the building, and highlight the relevant table row
+            app.view.on("pointer-move", function(event) {
+              if (app.highlight) {app.highlight.remove();}
+              app.view.hitTest(event).then(function(response) {
+                var result = response.results[0];
+
+                if (result && result.graphic && result.graphic.layer.title === config.buildingsLayerTitle) {
+                  var oid = result.graphic.attributes['OBJECTID'];
+                  if (oid !== undefined){
+                    var query = app.buildingsLayer.createQuery();
+                    query.where = "OBJECTID=" + oid;
+                    app.buildingsLayer.queryFeatures(query).then(function(result){
+                      console.log("TODO: trying to highlight floor - not working")
+                      app.highlight = app.buildingsLayerView.highlight(result.features);
+                    });
+                  }
+                }
+              });
+            });
+
           });
 
         } else if (layer.title === config.contextualBuildingsLayerTitle) {
