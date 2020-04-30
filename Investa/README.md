@@ -28,6 +28,38 @@ Then use this in the config file as the search URL:
 
 and access the application via http://localhost:8080.....
 
+## Stacking plan view
 
+Investa required the ability to open the map centred on a specified property, showing the 'stacking plan', or 3D side-on view of each building. eg https://www.investa.com.au/properties/135-king-street
 
+This is a two-step process, first requiring the creation of a unique Slide for each building, and finessing of the slide's viewpoint, before the buildings can be displayed on the individual property page.
 
+### Creating the slides
+
+Open the file slides.html, and it will automatically iterate through all of the buildings found in the 3D buildings layer.
+
+The script will then create a new Slide with the name of the building's PropertyID value (unless a slide already exists for that building).
+
+The slides will be shown in the right-hand panel of the screen. Use the Save button to write the changes to the web scene on ArcGIS Online (you'll need an admin login to Investa's ArcGIS Online for this)
+
+### Finessing the slides
+
+The slide is automatically calculated based on the combined extent of the building's floors, and probably won't show the building in its best light.
+
+Open the web scene (specified in the config.js file as `webMapID`) in Investa's ArcGIS Online.
+
+Each slide can be finessed by choosing it in the editor panel, adjusting its viewpoint, then saving the web scene (remembering to reset the starting viewpoint of the web scene to show all of Australia).
+
+### Displaying the stacking plan view
+
+The property.html page is a mockup showing how to integrate the 3D map with the CMS. It requires a hidden element on the page which shows the PropertyID of the current building:
+
+`$(".PropertyIDHidden input").val()`
+
+The slide matching this PropertyID is chosen, and the map opens showing this building's extent, as finessed in the previous step.
+
+`js/propertyMap.js` is the file containing the code that demonstrates how interaction between the Availability table and the map is possible.
+
+### Updating the slides
+
+If a new building is added to the portfolio, the slides.html file should be opened again, causing a new slide to be generated for the new building. Existing slides won't be affected, so their saved viewpoints will not be changed.

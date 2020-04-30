@@ -54,7 +54,8 @@ require([
     highlightOptions: {
       color: "#2DCCD3",
       fillOpacity: 0.8
-    }
+    },
+    availableFloors: null
   });
 
   // Remove unnecessary controls, add home control
@@ -118,23 +119,73 @@ require([
             }, function() {
               console.log("remove highlight")
               if (app.highlight) {app.highlight.remove();}
+              if (app.availableFloors !== null) {
+                app.highlight = app.buildingsLayerView.highlight(app.availableFloors);
+              }
             });
 
-            // Listen for a click on the building, and highlight the relevant table row
+            // Pre-highlight all of the available floors when the page loads
+            var query = app.buildingsLayer.createQuery();
+            query.where = "PropertyID =" + app.propertyID + " AND (";
+
+            var floorWhere;
+            var rows = $('.property-floor-row');
+            for (var r=0; r < rows.length; r++){
+              var row = rows[r];
+              var floor = $($(row).find('.first')[0]).data('floor');
+              if (floorWhere === undefined) {
+                floorWhere = "Floor = 'F" + floor + "'";
+              } else {
+                floorWhere += " OR Floor = 'F" + floor + "'";
+              }
+            }
+            if (floorWhere !== undefined){
+              query.where += floorWhere + ")"
+              query.outFields = ["*"];
+              app.buildingsLayer.queryFeatures(query).then(function(result){
+                app.availableFloors = result.features;
+                if (app.highlight) {app.highlight.remove();}
+                app.highlight = app.buildingsLayerView.highlight(app.availableFloors);
+              });
+            }
+
+            // Listen for a hover event on the building, and highlight the relevant table row
             app.view.on("pointer-move", function(event) {
-              if (app.highlight) {app.highlight.remove();}
+
+              // Remove any existing highlights
+              $('.property-floor-row').removeClass('active')
+
               app.view.hitTest(event).then(function(response) {
                 var result = response.results[0];
 
+                // Check whether the point is over a target building
                 if (result && result.graphic && result.graphic.layer.title === config.buildingsLayerTitle) {
                   var oid = result.graphic.attributes['OBJECTID'];
                   if (oid !== undefined){
                     var query = app.buildingsLayer.createQuery();
                     query.where = "OBJECTID=" + oid;
+                    query.outFields = ["*"];
+
+                    // Find the floor value for this feature, and highlight the floor
                     app.buildingsLayer.queryFeatures(query).then(function(result){
-                      console.log("TODO: trying to highlight floor - not working")
-                      app.highlight = app.buildingsLayerView.highlight(result.features);
+
+                      try{
+                        // Also highlight the matching table row for this floor. This will be the
+                        // row element, two levels up from the span holding the floor data attrbute
+                        var floor = parseInt(result.features[0].attributes['Floor'].replace("F",""));
+                        if ($('span[data-floor="' + floor + '"]')[0] !== undefined){
+                          $('span[data-floor="' + floor + '"]').parent().parent().addClass('active');
+                        }
+                      } catch(err) {
+                        console.error("There was a problem highlighting the floor in the table")
+                      }
                     });
+                  }
+                } else {
+                  // highlight the available floors
+                  if (app.availableFloors !== null) {
+                    if (app.highlight) {app.highlight.remove();}
+                    app.highlight = app.buildingsLayerView.highlight(app.availableFloors);
                   }
                 }
               });

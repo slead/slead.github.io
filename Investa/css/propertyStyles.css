@@ -27,3 +27,7 @@ body {
 .property-detail-level-table .property-floor-row:hover, .property-floor-row.js-hovered {
     background-color: rgba(0,132,203,0.05);
 }
+
+.property-floor-row.active {
+    background-color: rgba(0,132,203,0.05);
+}
