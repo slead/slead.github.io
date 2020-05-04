@@ -92,12 +92,14 @@ require([
       if (layer.title !== undefined) {
         if (layer.title === config.buildingsLayerTitle){
           app.buildingsLayer = layer;
+          app.buildingsLayer.visible = true;
           app.buildingsLayer.popupEnabled = false;
 
           // Filter the buildings layer to show only the target property
           app.view.whenLayerView(app.buildingsLayer).then(function(layerView){
             console.log("filtering buildings layer")
             app.buildingsLayerView = layerView;
+            app.buildingsLayerView.visible = true;
             app.buildingsLayerView.layer.definitionExpression = config.propertyIdField + '=' + parseInt(app.propertyID);
 
             // Highlight the relevant floor when hovering over it in the Availability table

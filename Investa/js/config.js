@@ -6,7 +6,7 @@ var config = {
 	searchUrl: 'http://localhost:8080/investa_server/SearchProperty.ashx?v1',
   // searchUrl: 'https://www.investa.com.au/www_investa/api/SearchProperty.ashx?v1',
 	pointLayerTitle: 'CapitalCities',
-  buildingsLayerTitle: 'Investa 3D',
+  buildingsLayerTitle: 'Investa3D',
   contextualBuildingsLayerTitle: 'ContextualBuildings',
   propertyIdField: 'PropertyID'
 }
