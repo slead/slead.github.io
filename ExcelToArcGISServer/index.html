@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+    <script type = "text/javascript" src = "app.js" ></script>
+  </head>
+
+  <body>
+    <h1>Choose an Excel file to upload to ArcGIS Server></h1>
+    <form enctype="multipart/form-data">
+      <input id="upload" type=file  name="files[]">
+    </form>
+
+    <h4>Parsed results</h4>
+    <textarea class="form-control" rows=35 cols=120 id="xlx_json"></textarea>
+
+    <h4>Response from ArcGIS Server</h4>
+    <textarea class="form-control" rows=35 cols=120 id="server-response"></textarea>
+
+  </body>
+</html>
