@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Goodman Leasing Demo</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="perry-park.html">Perry Park</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="mentone-distribution-centre.html">Mentone Distribution Center</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="redbank-motorway-estate">Redbank Motorway Estate</a>
+            </li>            
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row">
+        <div class="md-12">
+          <h1 id="title">Redbank Motorway Estate</h1>
+          <p>Whether you're looking to expand, consolidate or relocate your business, now is the time to join Australia Post, TNT, DB Schenker, Zenexus, Northline and Tyres4U at Redbank Motorway Estate. The estate enjoys direct toll free access to the Ipswich Motorway providing excellent connectivity to Brisbane's motorway network and beyond.</p>
+          <ul>
+              <li>Buildings may be delivered within 12 months</li>
+              <li>Land and buildings designed to specific user requirements</li>
+              <li>NBN, Telstra and Optus fibre services available</li>
+              <li>Fully serviced and benched industrial land ready for building construction (subject to council approvals)</li>
+              <li>Direct toll free access to Ipswich Motorway</li>
+          </ul>
+          <div id="map"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script src="./index.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXTstq4LXWLcDJKAOm0bPtNee6PBopz58&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  </body>
+</html>
+
+
+
+
