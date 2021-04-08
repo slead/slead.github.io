@@ -13,7 +13,7 @@ function initMap() {
     "esri/tasks/support/Query"
   ], function(QueryTask, Query) {
 
-    // retrieve the lat/long/zoom from the data-elements
+    // retrieve the lat/long/zoom, property id and name from the data-elements
     latitude = $("#title").data('latitude');
     longitude = $("#title").data('longitude')
     zoom = $("#title").data('zoom') || 15;
@@ -31,9 +31,9 @@ function initMap() {
       propertyUrl += '/query?outFields=*&returnGeometry=true&f=geojson';
 
       // Create a where clause using the applicable query (objectid, propertyid, or name)
+      propertyUrl += "&where=name=%27" + name.replaceAll(" ", "%20") + "%27";
       // propertyUrl += '&where=objectid=' + objectid;
       // propertyUrl += "&where=propertyid=%27" + propertyid + "%27";
-      propertyUrl += "&where=name=%27" + name.replaceAll(" ", "%20") + "%27";
 
       // Use this propertyUrl to load the GeoJSON
       gmap.data.loadGeoJson(propertyUrl);
@@ -42,15 +42,14 @@ function initMap() {
     }
 
     if (propertyid){
-      // Fetch the enriched data
+      // Fetch the enriched data using an ArcGIS QueryTask and Query
       let queryTask = new QueryTask({
         url: enrichUrl
       });
       let query = new Query({
         where: "propertyid = '" + propertyid + "'",
         returnGeometry: true,
-        outFields: "*",
-        token: token
+        outFields: "*"
       })
 
       queryTask.execute(query)
@@ -66,27 +65,24 @@ function initMap() {
     let attributes = results.features[0].attributes;
     console.log("enrich query results:", attributes)
 
-    // Add the results to the UI
+    // Add the results to the UI. This demo uses jQuery but this would work well in a Handlebars template, React template, etc
     let stats = ['totpop_cy', 'tothh_cy', 'avghhsz_cy', 'cs01_cy', 'cs04_cy', 'cs05_cy', 'cs12_cy', 'cs13_cy', 'cs19_cy', 'pp_cy', 'ppidx_cy', 'pppc_cy']
     stats.forEach(stat => {
       $('#' + stat).text(attributes[stat])
     });
-
     $("#stats").show();
-    createDrivetimeMap();   
+
+    // Add the polygon to an ArcGIS map
+    createDrivetimeMap(results.features[0]);   
     
   }
 
-  function handleQueryFail(error){
-    console.error("There was a problem running the enrichment query:", error)
-    $("#stats").hide();
-  }
-
-  function createDrivetimeMap() {
+  function createDrivetimeMap(polygon) {
     require([
       "esri/Map",
-      "esri/views/MapView"
-    ], function(Map, View) {
+      "esri/views/MapView",
+      "esri/Graphic"
+    ], function(Map, View, Graphic) {
       // Create the drivetime map
       esrimap = new Map({
         basemap: "topo-vector"
@@ -96,9 +92,38 @@ function initMap() {
         container: "drivetimeMap",
         map: esrimap,
         zoom: zoom,
-        center: [longitude, latitude] // longitude, latitude
+        center: [longitude, latitude],
+        ui: { components: ["attribution"] } // remove the Zoom in/out buttons
       });
+
+      // Prevent navigation
+      view.on(["click", "drag", "double-click", "mouse-wheel", "hold", ], function(event) {
+        event.stopPropagation();
+      });
+
+      var fillSymbol = {
+        type: "simple-fill",
+        color: "#77AD1C",
+        outline: {
+          color: "#77AD1C",
+          width: 1
+        }
+      };
+
+      // Add the geometry and symbol to a new graphic
+      var polygonGraphic = new Graphic({
+        geometry: polygon.geometry,
+        symbol: fillSymbol
+      });
+      view.goTo(polygonGraphic);
+      view.graphics.add(polygonGraphic);
 
     })
   }
+
+  function handleQueryFail(error){
+    console.error("There was a problem running the enrichment query:", error)
+    $("#stats").hide();
+  }
+  
 }
