@@ -59,11 +59,22 @@ function initMap() {
   })
 
   function handleQueryResults(results){
-    console.log("enrich query results:", results)
+    let attributes = results.features[0].attributes;
+    console.log("enrich query results:", attributes)
+
+    // Add the results to the UI
+    let stats = ['totpop_cy', 'tothh_cy', 'avghhsz_cy', 'cs01_cy', 'cs04_cy', 'cs05_cy', 'cs12_cy', 'cs13_cy', 'cs19_cy']
+    stats.forEach(stat => {
+      $('#' + stat).text(attributes[stat])
+    });
+
+    $("#stats").show();
+    
   }
 
   function handleQueryFail(error){
     console.error("There was a problem running the enrichment query:", error)
+    $("#stats").hide();
   }
 
 }
