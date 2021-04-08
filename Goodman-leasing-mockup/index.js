@@ -41,21 +41,25 @@ function initMap() {
       console.error("Can't find all required property details so map won't be shown")
     }
 
-    // Fetch the enriched data
-    let queryTask = new QueryTask({
-      url: enrichUrl
-    });
-    let query = new Query({
-      where: "propertyid = '" + propertyid + "'",
-      returnGeometry: true,
-      outFields: "*",
-      token: token
-    })
+    if (propertyid){
+      // Fetch the enriched data
+      let queryTask = new QueryTask({
+        url: enrichUrl
+      });
+      let query = new Query({
+        where: "propertyid = '" + propertyid + "'",
+        returnGeometry: true,
+        outFields: "*",
+        token: token
+      })
 
-    queryTask.execute(query)
-      .then(handleQueryResults)
-      .catch(handleQueryFail)
+      queryTask.execute(query)
+        .then(handleQueryResults)
+        .catch(handleQueryFail)
 
+    } else {
+      console.error("property id not found, can't fetch enrichment data")
+    }
   })
 
   function handleQueryResults(results){
@@ -63,7 +67,7 @@ function initMap() {
     console.log("enrich query results:", attributes)
 
     // Add the results to the UI
-    let stats = ['totpop_cy', 'tothh_cy', 'avghhsz_cy', 'cs01_cy', 'cs04_cy', 'cs05_cy', 'cs12_cy', 'cs13_cy', 'cs19_cy']
+    let stats = ['totpop_cy', 'tothh_cy', 'avghhsz_cy', 'cs01_cy', 'cs04_cy', 'cs05_cy', 'cs12_cy', 'cs13_cy', 'cs19_cy', 'pp_cy', 'ppidx_cy', 'pppc_cy']
     stats.forEach(stat => {
       $('#' + stat).text(attributes[stat])
     });
