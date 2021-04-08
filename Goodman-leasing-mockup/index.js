@@ -1,5 +1,9 @@
-let gmap, esrimap, latitude, longitude, propertyid, zoom, name;
+let gmap, esrimap, latitude, longitude, propertyid, zoom, propertyName;
+
+// Publicly-accessible property boundary layer
 let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/PropertyBoundariesTemplate/FeatureServer/0';
+
+// Layer holding the drivetime + enrichment results. This is currently private so requires a token, but will need to be publicly-accessible
 let enrichUrl = 'https://smartspace.goodman.com/arcgis/rest/services/Hosted/Leasing_enriched_drivetimes/FeatureServer/0';
 
 // TODO: A token is required until the layer is made publicly-accessible
@@ -13,15 +17,15 @@ function initMap() {
     "esri/tasks/support/Query"
   ], function(QueryTask, Query) {
 
-    // retrieve the lat/long/zoom, property id and name from the data-elements
+    // retrieve the lat/long/zoom, property id and propertyName from the data-elements on the DOM
     latitude = $("#title").data('latitude');
     longitude = $("#title").data('longitude')
     zoom = $("#title").data('zoom') || 15;
     objectid = $("#title").data('objectid');
     propertyid = $("#title").data('propertyid');
-    name = $("#title").data('name');
+    propertyName = $("#title").data('propertyname');
 
-    if (latitude && longitude && objectid && propertyid && name){
+    if (latitude && longitude && objectid && propertyid && propertyName){
       gmap = new google.maps.Map(document.getElementById("gmap"), {
         center: { lat: latitude, lng: longitude },
         zoom: zoom,
@@ -36,8 +40,8 @@ function initMap() {
       // Fetch the GeoJSON representation of the property and load it into the map
       propertyUrl += '/query?outFields=*&returnGeometry=true&f=geojson';
 
-      // Create a where clause using the applicable query (objectid, propertyid, or name)
-      propertyUrl += "&where=name=%27" + name.replaceAll(" ", "%20") + "%27";
+      // Create a where clause using the applicable query (objectid, propertyid, or propertyName)
+      propertyUrl += "&where=name=%27" + propertyName.replaceAll(" ", "%20") + "%27";
       // propertyUrl += '&where=objectid=' + objectid;
       // propertyUrl += "&where=propertyid=%27" + propertyid + "%27";
 
