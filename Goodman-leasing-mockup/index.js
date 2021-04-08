@@ -1,4 +1,4 @@
-let map;
+let gmap, esrimap, latitude, longitude, propertyid, zoom, name;
 let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/PropertyBoundariesTemplate/FeatureServer/0';
 let enrichUrl = 'https://smartspace.goodman.com/arcgis/rest/services/Hosted/Leasing_enriched_drivetimes/FeatureServer/0';
 
@@ -14,15 +14,15 @@ function initMap() {
   ], function(QueryTask, Query) {
 
     // retrieve the lat/long/zoom from the data-elements
-    let latitude = $("#title").data('latitude');
-    let longitude = $("#title").data('longitude')
-    let zoom = $("#title").data('zoom') || 15;
-    let objectid = $("#title").data('objectid');
-    let propertyid = $("#title").data('propertyid');
-    let name = $("#title").data('name');
+    latitude = $("#title").data('latitude');
+    longitude = $("#title").data('longitude')
+    zoom = $("#title").data('zoom') || 15;
+    objectid = $("#title").data('objectid');
+    propertyid = $("#title").data('propertyid');
+    name = $("#title").data('name');
 
     if (latitude && longitude && objectid && propertyid && name){
-      map = new google.maps.Map(document.getElementById("map"), {
+      gmap = new google.maps.Map(document.getElementById("gmap"), {
         center: { lat: latitude, lng: longitude },
         zoom: zoom,
       });
@@ -36,7 +36,7 @@ function initMap() {
       propertyUrl += "&where=name=%27" + name.replaceAll(" ", "%20") + "%27";
 
       // Use this propertyUrl to load the GeoJSON
-      map.data.loadGeoJson(propertyUrl);
+      gmap.data.loadGeoJson(propertyUrl);
     } else {
       console.error("Can't find all required property details so map won't be shown")
     }
@@ -73,6 +73,7 @@ function initMap() {
     });
 
     $("#stats").show();
+    createDrivetimeMap();   
     
   }
 
@@ -81,4 +82,23 @@ function initMap() {
     $("#stats").hide();
   }
 
+  function createDrivetimeMap() {
+    require([
+      "esri/Map",
+      "esri/views/MapView"
+    ], function(Map, View) {
+      // Create the drivetime map
+      esrimap = new Map({
+        basemap: "topo-vector"
+      });
+
+      var view = new View({
+        container: "drivetimeMap",
+        map: esrimap,
+        zoom: zoom,
+        center: [longitude, latitude] // longitude, latitude
+      });
+
+    })
+  }
 }
