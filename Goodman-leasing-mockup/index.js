@@ -27,6 +27,12 @@ function initMap() {
         zoom: zoom,
       });
 
+      gmap.data.setStyle({
+        fillColor: "#77AD1C",
+        fillOpacity: 0.8,
+        strokeWeight: 0
+      });
+
       // Fetch the GeoJSON representation of the property and load it into the map
       propertyUrl += '/query?outFields=*&returnGeometry=true&f=geojson';
 
@@ -70,11 +76,10 @@ function initMap() {
     stats.forEach(stat => {
       $('#' + stat).text(attributes[stat])
     });
-    $("#stats").show();
 
-    // Add the polygon to an ArcGIS map
-    createDrivetimeMap(results.features[0]);   
-    
+    // Add the polygon to an ArcGIS map, and display the stats section
+    createDrivetimeMap(results.features[0]);
+    $("#stats").show();
   }
 
   function createDrivetimeMap(polygon) {
@@ -85,7 +90,7 @@ function initMap() {
     ], function(Map, View, Graphic) {
       // Create the drivetime map
       esrimap = new Map({
-        basemap: "topo-vector"
+        basemap: "gray-vector"
       });
 
       var view = new View({
@@ -115,8 +120,8 @@ function initMap() {
         geometry: polygon.geometry,
         symbol: fillSymbol
       });
-      view.goTo(polygonGraphic);
       view.graphics.add(polygonGraphic);
+      view.goTo(polygonGraphic)
 
     })
   }
@@ -125,5 +130,5 @@ function initMap() {
     console.error("There was a problem running the enrichment query:", error)
     $("#stats").hide();
   }
-  
+
 }
