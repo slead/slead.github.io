@@ -7,10 +7,9 @@ This demo is a proof-of-concept for the design at https://ogilvy-aus.invisionapp
 #### Include the Google Maps API and CSS
 
 ```
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXTstq4LXWLcDJKAOm0bPtNee6PBopz58&callback=initMap&libraries=&v=weekly" async></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=your-api-key&callback=initMap&libraries=&v=weekly" async></script>
 #gmap {height: 600px;}
 ```
-(you'll need to replace the API key with your own)
 
 #### Include the ArcGIS Server API and CSS
 
@@ -84,3 +83,14 @@ queryTask.execute(query).then(handleQueryResults)
 ```
 
 The `handleQueryResults` function adds the polygon to the map, and parses the attributes to add them to the DOM. This demo uses a simple jQuery substitution to demonstrate the concept.
+
+```
+let stats = ['total_population', 'total_households', 'avg_household_size', 'food_beverage', 'clothing', 'footwear', 'medical_products', 'electronics', 'personal_care', 'purchasing_power', 'purchasing_power_index', 'purchasing_power_per_capita']
+stats.forEach(stat => {
+    $('#' + stat).text(attributes[stat])
+});
+````
+
+The stats have been renamed with human-readable values so should be self-explanatory.
+
+The drivetime polygons and statistics will be calculated automatically (at the conclusion of this project) using a back-end script, so new Goodman properties will automatically appear in this database when the script is re-run.
