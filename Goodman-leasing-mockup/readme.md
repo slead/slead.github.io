@@ -91,6 +91,12 @@ stats.forEach(stat => {
 });
 ````
 
-The stats have been renamed with human-readable values so should be self-explanatory.
+The stats have been renamed with human-readable values so should be self-explanatory. The query response also includes the calculations used to generate the polygon (drivetime/minutes vs straight-line/kilometres ) and the distance (45 minutes driving time in this example):
+
+```
+country: Australia
+distance: 45.0
+buffer_type: Driving Time
+```
 
 The drivetime polygons and statistics will be calculated automatically (at the conclusion of this project) using a back-end script, so new Goodman properties will automatically appear in this database when the script is re-run.
