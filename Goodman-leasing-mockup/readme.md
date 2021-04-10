@@ -85,7 +85,9 @@ queryTask.execute(query).then(handleQueryResults)
 The `handleQueryResults` function adds the polygon to the map, and parses the attributes to add them to the DOM. This demo uses a simple jQuery substitution to demonstrate the concept.
 
 ```
-let stats = ['total_population', 'total_households', 'avg_household_size', 'food_beverage', 'clothing', 'footwear', 'medical_products', 'electronics', 'personal_care', 'purchasing_power', 'purchasing_power_index', 'purchasing_power_per_capita']
+let stats = ['total_population', 'total_households', 'avg_household_size', 'food_beverage', 'clothing', 'footwear', 'medical_products', 
+    'electronics', 'personal_care', 'purchasing_power', 'purchasing_power_index', 'purchasing_power_per_capita',
+    'food_at_home', 'ordered_online', 'retail_goods', 'wealth_index', 'avg_disposable_income', 'total_disposable_income']
 stats.forEach(stat => {
     $('#' + stat).text(attributes[stat])
 });
@@ -98,5 +100,7 @@ country: Australia
 distance: 45.0
 buffer_type: Driving Time
 ```
+
+USA statistics are slightly different to the rest of the world, as shown in the Eastvale Commerce Center example.
 
 The drivetime polygons and statistics will be calculated automatically (at the conclusion of this project) using a back-end script, so new Goodman properties will automatically appear in this database when the script is re-run.

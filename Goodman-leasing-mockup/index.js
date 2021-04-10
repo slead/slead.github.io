@@ -74,7 +74,9 @@ function initMap() {
     console.log("enrich query results:", attributes)
 
     // Add the results to the UI. This demo uses jQuery but this would work well in a Handlebars template, React template, etc
-    let stats = ['total_population', 'total_households', 'avg_household_size', 'food_beverage', 'clothing', 'footwear', 'medical_products', 'electronics', 'personal_care', 'purchasing_power', 'purchasing_power_index', 'purchasing_power_per_capita']
+    let stats = ['total_population', 'total_households', 'avg_household_size', 'food_beverage', 'clothing', 'footwear', 'medical_products', 
+      'electronics', 'personal_care', 'purchasing_power', 'purchasing_power_index', 'purchasing_power_per_capita',
+      'food_at_home', 'ordered_online', 'retail_goods', 'wealth_index', 'avg_disposable_income', 'total_disposable_income']
     stats.forEach(stat => {
       $('#' + stat).text(attributes[stat])
     });
