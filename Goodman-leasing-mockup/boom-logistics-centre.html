@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Eastvale Commerce Center</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/themes/light/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <div class="container-fluid">
+        
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="perry-park.html">Perry Park</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="mentone-distribution-centre.html">Mentone Distribution Center</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="m7-business-hub.html">M7 Business Hub</a>
+              </li>
+            <li class="nav-item">
+              <a class="nav-link" href="redbank-motorway-estate.html">Redbank Motorway Estate</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="eastvale-commerce-center.html">Eastvale Commerce Center</a>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <div class="row">
+        <div class="md-12">
+          <h1 id="title"
+            data-propertyname='Boom Logistics Centre'
+            data-propertyid='874eb28e-1e5c-4e9d-bbbc-11679d90544e'
+            data-latitude='51.100893'
+            data-longitude='4.35811'
+            data-zoom='16'
+          >Boom Logistics Centre</h1>
+          <p>Boom Logistics Centre is located in one of Belgium’s most important logistics hotspots for national distribution. It provides direct access to the main Antwerp-Brussels logistics route. Moreover, within 2 to 3 years' time, the E19 motorway and the A12 will be connected by an additional access road. </p>
+          <p>Goodman has finalised the development of the Boom Logistics Centre which offers customers up to 23,000 sqm of brand new logistics space.</p>
+          <ul>
+              <li>Strategic location on the main Antwerp-Brussels logistics route, with easy access to the major road network (N16 and A12)</li>
+              <li>Full project management  by Goodman experts, with a single point of contact</li>
+              <li>EAttractive lease rates and in-house property management</li>
+              <li>Competitive pricing for a next-generation facility</li>
+          </ul>
+          <div id="gmap"></div>
+
+          <div id="stats" class="mt-5">
+            <div class="row">
+              <div class="col-md-6">
+                <div id="drivetimeMap"></div>
+              </div>
+
+              <div class="col-md-6">
+                <h4>Total Population</h4>
+                <span id="total_population"></span>
+
+                <h4>Total Households</h4>
+                <span id="total_households"></span>
+
+                <h4>Average Household Size</h4>
+                <span id="avg_household_size"></span>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://js.arcgis.com/4.18/"></script>
+    <script src="./index.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXTstq4LXWLcDJKAOm0bPtNee6PBopz58&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+  </body>
+</html>
+
+
+
+

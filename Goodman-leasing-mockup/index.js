@@ -1,13 +1,15 @@
 let gmap, esrimap, latitude, longitude, propertyid, zoom, propertyName;
 
 // Publicly-accessible property boundary layer
-let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/PropertyBoundariesTemplate/FeatureServer/0';
+// let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/PropertyBoundariesTemplate/FeatureServer/0';
+
+let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/Hosted/PropertyBoundariesPropID/FeatureServer/0';
 
 // Layer holding the drivetime + enrichment results. This is currently private so requires a token, but will need to be publicly-accessible
 let enrichUrl = 'https://smartspace.goodman.com/arcgis/rest/services/Hosted/enriched_drivetimes/FeatureServer/0';
 
 // TODO: A token is required until the layer is made publicly-accessible
-let token = 'rQqU52eE3CXxIznkRKgQLwEXdCD-CGBoL9j1VitT95VEJxL5YJTM_68oGbP2JpQ5ehqJdTahk6cQOpbUVCS_FqIJMEEnryw7y2pin0ovWv8SlvrYn47BPyAhtsYbp0YIZ6LwnqB444UoXyBgKTwPPSxtIBW1EznaM1BAsJUCdntq14bMg6VEP7z_0TMCM5ezLnGq47zWjHGpY7QJOHkXGY6XvQ3nZp-S3xZT8iTTmpM.'
+let token = 'xHT4inhHpUlYnQD8c4HzZLbE6Ikv7HyxQNbJOrdk2TswUu-O2NPFpzOUbuEMwpXwMoSs91sptpdeJJDaSlV2t_bulxX5ZVXO1xU648WHrWXQ3KmgEaMDWNU9O-w-tksU5UafIZraRzYi6-K1lURghQVZHYejJbcYALUW07fkEckLcTtwJkYPXr-0C4RFT0xU72gRhcIVbBpMeLi_x8crgaYVL8oZOha3A1pjt3LsHxs.'
 enrichUrl += "?token=" + token;
 
 function initMap() {
@@ -40,8 +42,8 @@ function initMap() {
       propertyUrl += '/query?outFields=*&returnGeometry=true&f=geojson';
 
       // Create a where clause using the applicable query (propertyid, or propertyName)
-      propertyUrl += "&where=name=%27" + propertyName.replaceAll(" ", "%20") + "%27";
-      // propertyUrl += "&where=propertyid=%27" + propertyid + "%27";
+      //propertyUrl += "&where=name=%27" + propertyName.replaceAll(" ", "%20") + "%27";
+      propertyUrl += "&where=propertyid=%27" + propertyid + "%27";
 
       // Use this propertyUrl to load the GeoJSON
       gmap.data.loadGeoJson(propertyUrl);
