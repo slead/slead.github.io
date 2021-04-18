@@ -93,6 +93,8 @@ stats.forEach(stat => {
 });
 ````
 
+Note that not all attributes are available for all sites (eg see Boom Logistics Centre demo) so you should verify these values exist before displaying them.
+
 The stats have been renamed with human-readable values so should be self-explanatory. The query response also includes the calculations used to generate the polygon (drivetime/minutes vs straight-line/kilometres ) and the distance (45 minutes driving time in this example):
 
 ```
