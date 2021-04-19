@@ -19,7 +19,7 @@ function initMap() {
     zoom = $("#title").data('zoom') || 15;
     propertyid = $("#title").data('propertyid');
 
-    if (latitude && longitude && propertyid && propertyName){
+    if (latitude && longitude && propertyid){
       gmap = new google.maps.Map(document.getElementById("gmap"), {
         center: { lat: latitude, lng: longitude },
         zoom: zoom,
