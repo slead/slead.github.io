@@ -25,7 +25,6 @@ An element somewhere on the page must contain the property details as data- obje
 
 ```
 <h1 id="title"
-    data-propertyname='M7 Business Hub'
     data-propertyid='7a915ae6-1bc4-47e8-88a9-27082e7b6c85'
     data-latitude='-33.8130869'
     data-longitude='150.8412945'
@@ -37,19 +36,17 @@ An element somewhere on the page must contain the property details as data- obje
 
 `propertyid`, `latitude` and `longitude` are required at a minimum, while the `zoom` value can be used to finesse the starting extent of the Google map.
 
-(During testing, `propertyname` is being used as a proxy for `propertyid`; this can be removed once `propertyid` is available on the ArcGIS Server layer)
-
 #### Fetching the property boundary for the Google map
 
 The Google map is instantiated at the lat/long specified above:
 
 `gmap = new google.maps.Map(document.getElementById("gmap"), {center: { lat: latitude, lng: longitude }, zoom: zoom,});`
 
-There is a layer in SmartSpace holding the property boundaries. This is queried using the `propertid` value to obtain the GeoJSON polygons:
+There is a layer in SmartSpace holding the property boundaries. This is queried using the `propertyid` value to obtain the GeoJSON polygons:
 
 ```
 // Publicly-accessible property boundary layer
-let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/PropertyBoundariesTemplate/FeatureServer/0';
+let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/Hosted/PropertyBoundariesPropID/FeatureServer/0';
 
 // Fetch the GeoJSON representation of the property and load it into the map
 propertyUrl += '/query?outFields=*&returnGeometry=true&f=geojson';
@@ -64,17 +61,17 @@ gmap.data.loadGeoJson(propertyUrl);
 
 #### Fetching the drivetime polygon and statistics for the ArcGIS map
 
-There is a layer holding the drivetime polygons and associated population/spending statistics. This layer is currently protected by a token, but will need to be made publicly accessible.
+There is a layer holding the drivetime polygons and associated population/spending statistics:
 
 `let enrichUrl = 'https://smartspace.goodman.com/arcgis/rest/services/Hosted/enriched_drivetimes/FeatureServer/0';`
 
-Using an ArcGIS Server [QueryTask](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-QueryTask.html) the applicable polygon is fetched basd on the `propertyid`. This polygon contains the shape plus attributes required to populate the demographic charts.
+Using an ArcGIS Server [QueryTask](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-QueryTask.html) the applicable polygon is fetched based on the `propertyid` - an addition query for `status = 'ok'` rejects any problematic features. This polygon contains the shape plus attributes required to populate the demographic charts.
 
 ```
 let queryTask = new QueryTask({url: enrichUrl});
 
 let query = new Query({
-    where: "propertyid = '" + propertyid + "'",
+    where: "propertyid = '" + propertyid + "' and status = 'ok'",
     returnGeometry: true,
     outFields: "*"
 });

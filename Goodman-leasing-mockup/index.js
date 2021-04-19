@@ -1,16 +1,10 @@
 let gmap, esrimap, latitude, longitude, propertyid, zoom, propertyName;
 
 // Publicly-accessible property boundary layer
-// let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/PropertyBoundariesTemplate/FeatureServer/0';
-
 let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/Hosted/PropertyBoundariesPropID/FeatureServer/0';
 
-// Layer holding the drivetime + enrichment results. This is currently private so requires a token, but will need to be publicly-accessible
+// Publicly-accessible layer holding the drivetime + enrichment results.
 let enrichUrl = 'https://smartspace.goodman.com/arcgis/rest/services/Hosted/enriched_drivetimes/FeatureServer/0';
-
-// TODO: A token is required until the layer is made publicly-accessible
-let token = 'xHT4inhHpUlYnQD8c4HzZLbE6Ikv7HyxQNbJOrdk2TswUu-O2NPFpzOUbuEMwpXwMoSs91sptpdeJJDaSlV2t_bulxX5ZVXO1xU648WHrWXQ3KmgEaMDWNU9O-w-tksU5UafIZraRzYi6-K1lURghQVZHYejJbcYALUW07fkEckLcTtwJkYPXr-0C4RFT0xU72gRhcIVbBpMeLi_x8crgaYVL8oZOha3A1pjt3LsHxs.'
-enrichUrl += "?token=" + token;
 
 function initMap() {
 
@@ -24,7 +18,6 @@ function initMap() {
     longitude = $("#title").data('longitude')
     zoom = $("#title").data('zoom') || 15;
     propertyid = $("#title").data('propertyid');
-    propertyName = $("#title").data('propertyname');
 
     if (latitude && longitude && propertyid && propertyName){
       gmap = new google.maps.Map(document.getElementById("gmap"), {
@@ -57,7 +50,7 @@ function initMap() {
         url: enrichUrl
       });
       let query = new Query({
-        where: "propertyid = '" + propertyid + "'",
+        where: "propertyid = '" + propertyid + "' and status = 'ok'",
         returnGeometry: true,
         outFields: "*"
       })
@@ -72,20 +65,24 @@ function initMap() {
   })
 
   function handleQueryResults(results){
-    let attributes = results.features[0].attributes;
-    console.log("enrich query results:", attributes)
+    try{
+      let attributes = results.features[0].attributes;
+      console.log("enrich query results:", attributes)
 
-    // Add the results to the UI. This demo uses jQuery but this would work well in a Handlebars template, React template, etc
-    let stats = ['total_population', 'total_households', 'avg_household_size', 'food_beverage', 'clothing', 'footwear', 'medical_products', 
-      'electronics', 'personal_care', 'purchasing_power', 'purchasing_power_index', 'purchasing_power_per_capita',
-      'food_at_home', 'ordered_online', 'retail_goods', 'wealth_index', 'avg_disposable_income', 'total_disposable_income']
-    stats.forEach(stat => {
-      $('#' + stat).text(attributes[stat])
-    });
+      // Add the results to the UI. This demo uses jQuery but this would work well in a Handlebars template, React template, etc
+      let stats = ['total_population', 'total_households', 'avg_household_size', 'food_beverage', 'clothing', 'footwear', 'medical_products', 
+        'electronics', 'personal_care', 'purchasing_power', 'purchasing_power_index', 'purchasing_power_per_capita',
+        'food_at_home', 'ordered_online', 'retail_goods', 'wealth_index', 'avg_disposable_income', 'total_disposable_income']
+      stats.forEach(stat => {
+        $('#' + stat).text(attributes[stat])
+      });
 
-    // Add the polygon to an ArcGIS map, and display the stats section
-    createDrivetimeMap(results.features[0]);
-    $("#stats").show();
+      // Add the polygon to an ArcGIS map, and display the stats section
+      createDrivetimeMap(results.features[0]);
+      $("#stats").show();
+    } catch(err){
+      console.error("There was a problem displaying the drivetime results")
+    }
   }
 
   function createDrivetimeMap(polygon) {
