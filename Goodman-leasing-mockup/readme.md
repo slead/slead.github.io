@@ -51,8 +51,8 @@ let propertyUrl = 'https://smartspace.goodman.com/arcgis/rest/services/Hosted/Pr
 // Fetch the GeoJSON representation of the property and load it into the map
 propertyUrl += '/query?outFields=*&returnGeometry=true&f=geojson';
 
-// Create a where clause using the propertyid  query 
-propertyUrl += "&where=propertyid=%27" + propertyid + "%27";
+// Create a where clause using the propertyid query. Also get matching parentid values
+propertyUrl += "&where=propertyid=%27" + propertyid + "%27 or parentid=%27" + propertyid + "%27" ;
 
 // Use this propertyUrl to load the GeoJSON
 gmap.data.loadGeoJson(propertyUrl);

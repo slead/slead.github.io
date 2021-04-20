@@ -34,8 +34,7 @@ function initMap() {
       // Fetch the GeoJSON representation of the property and load it into the map
       propertyUrl += '/query?outFields=*&returnGeometry=true&f=geojson';
 
-      // Create a where clause using the applicable query (propertyid, or propertyName)
-      //propertyUrl += "&where=name=%27" + propertyName.replaceAll(" ", "%20") + "%27";
+      // Create a where clause using the applicable propertyid query. Also get matching parentid values
       propertyUrl += "&where=propertyid=%27" + propertyid + "%27 or parentid=%27" + propertyid + "%27" ;
 
       // Use this propertyUrl to load the GeoJSON
