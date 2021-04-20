@@ -36,7 +36,7 @@ function initMap() {
 
       // Create a where clause using the applicable query (propertyid, or propertyName)
       //propertyUrl += "&where=name=%27" + propertyName.replaceAll(" ", "%20") + "%27";
-      propertyUrl += "&where=propertyid=%27" + propertyid + "%27";
+      propertyUrl += "&where=propertyid=%27" + propertyid + "%27 or parentid=%27" + propertyid + "%27" ;
 
       // Use this propertyUrl to load the GeoJSON
       gmap.data.loadGeoJson(propertyUrl);
