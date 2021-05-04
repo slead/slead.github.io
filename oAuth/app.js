@@ -30,18 +30,18 @@ require([
             console.log("signed in status", status)
         })
         .catch(() => {
-            console.log("not signed in")
+            console.error("not signed in")
         });
 
     var webmap = new WebMap({
-      portalItem: {
+    portalItem: {
         id: "c1edd5c42b684a9cb8a00cec8ff8c859"
-      }
+    }
     });
 
     var view = new MapView({
-      map: webmap,
-      container: "viewDiv"
+    map: webmap,
+    container: "viewDiv"
     });
 
     view.when(function() {
@@ -50,4 +50,5 @@ require([
         });
         view.ui.add(layerList, "top-right");
     });
+
 });
