@@ -32,14 +32,12 @@ require([
         });
 
     var webmap = new WebMap({
-    portalItem: {
-        id: "c1edd5c42b684a9cb8a00cec8ff8c859"
-    }
+        portalItem: {id: "c1edd5c42b684a9cb8a00cec8ff8c859"}
     });
 
     var view = new MapView({
-    map: webmap,
-    container: "viewDiv"
+        map: webmap,
+        container: "viewDiv"
     });
 
     view.when(function() {
