@@ -4,8 +4,7 @@ require([
     "esri/widgets/LayerList",
     "esri/portal/Portal",
     "esri/identity/OAuthInfo",
-    "esri/identity/IdentityManager",
-    "esri/portal/PortalQueryParams"
+    "esri/identity/IdentityManager"
     ], 
     function(
         MapView,
@@ -13,8 +12,7 @@ require([
         LayerList,
         Portal,
         OAuthInfo,
-        esriId,
-        PortalQueryParams
+        esriId
     ) {
 
     const info = new OAuthInfo({
