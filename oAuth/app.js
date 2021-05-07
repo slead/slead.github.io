@@ -16,8 +16,8 @@ require([
     ) {
 
     const info = new OAuthInfo({
-        appId: "JNywHQSYkzrfoxdw",
-        // portalUrl: "https://<host>:<port>/arcgis"
+        appId: "HvT9UDdNs8w63Ary",
+        // portalUrl: "https://spatial-portal.industry.nsw.gov.au/portal/",
         popup: false
     });
     esriId.registerOAuthInfos([info]);
@@ -32,7 +32,7 @@ require([
         });
 
     var webmap = new WebMap({
-        portalItem: {id: "c1edd5c42b684a9cb8a00cec8ff8c859"}
+        portalItem: {id: "1d51d6346f644950afdaea8871fadc94"}
     });
 
     var view = new MapView({
