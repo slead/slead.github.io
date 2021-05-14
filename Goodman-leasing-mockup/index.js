@@ -18,6 +18,7 @@ function initMap() {
     longitude = $("#title").data('longitude')
     zoom = $("#title").data('zoom') || 15;
     propertyid = $("#title").data('propertyid');
+    localityid = $("#title").data('localityid');
 
     if (latitude && longitude && propertyid){
       gmap = new google.maps.Map(document.getElementById("gmap"), {
@@ -40,16 +41,30 @@ function initMap() {
       // Use this propertyUrl to load the GeoJSON
       gmap.data.loadGeoJson(propertyUrl);
     } else {
-      console.error("Can't find all required property details so map won't be shown")
+      console.error("Can't find all required property details so Google Map won't be shown")
     }
 
-    if (propertyid){
+    // Display the Goodman properties on an ArcGIS Map if the leasingMap element is found
+    if ($("#leasingMap").length > 0 && latitude && longitude && zoom){
+      createLeasingMap(latitude, longitude, zoom);
+    }
+
+    if (propertyid || localityid){
       // Fetch the enriched data using an ArcGIS QueryTask and Query
       let queryTask = new QueryTask({
         url: enrichUrl
       });
+
+      // Build the appropriate Where clause for property vs locality
+      let where;
+      if (propertyid) {
+        where = "propertyid = '" + propertyid + "' and status = 'ok'";
+      } else {
+        where = "localityid = '" + localityid + "' and status = 'ok'";
+      }
+
       let query = new Query({
-        where: "propertyid = '" + propertyid + "' and status = 'ok'",
+        where: where,
         returnGeometry: true,
         outFields: "*"
       })
@@ -131,6 +146,34 @@ function initMap() {
   function handleQueryFail(error){
     console.error("There was a problem running the enrichment query:", error)
     $("#stats").hide();
+  }
+
+  function createLeasingMap(latitude, longitude, zoom) {
+    // Add the Goodman points to an ArcGIS map
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer"
+    ], function(Map, View, FeatureLayer) {
+      var map = new Map({
+        basemap: "gray-vector"
+      });
+
+      var view = new View({
+        container: "leasingMap",
+        map: map,
+        center: [longitude, latitude],
+        zoom: zoom
+      });
+
+      var featureLayer = new FeatureLayer({
+        url: "https://smartspace.goodman.com/arcgis/rest/services/goodman/FeatureServer/1"
+      });
+
+      map.add(featureLayer);
+
+    });
+
   }
 
 }
