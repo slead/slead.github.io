@@ -132,12 +132,31 @@ function initMap() {
         }
       };
 
+      var markerSymbol = {
+        type: "picture-marker",
+        url: "./white_plus.png",
+        width: "40px",
+        height: "40px"
+      };
+
       // Add the geometry and symbol to a new graphic
       var polygonGraphic = new Graphic({
         geometry: polygon.geometry,
         symbol: fillSymbol
       });
       view.graphics.add(polygonGraphic);
+
+      // Add the Goodman property point
+      var pointGraphic = new Graphic({
+        geometry: {
+          type: "point",
+          longitude: longitude,
+          latitude: latitude
+        },
+        symbol: markerSymbol
+      });
+      view.graphics.add(pointGraphic);
+
       view.goTo(polygonGraphic)
 
     })
