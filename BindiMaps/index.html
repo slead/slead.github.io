@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>BindiMaps - Stockland Nowra test</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoidG9ueWJ1cnJldHQiLCJhIjoiY2tnNjJzemJ4MDVkNjM2cjEwa2txY3RmdSJ9.uE-N75ziZpHDNtE2nr6Gug';
+
+    // Minimalist BindiMaps style showing streets, towns, etc only
+    const mapboxStyle = 'mapbox://styles/tonyburrett/cleetvbrw000301pllx4qmouo';
+
+    // Polygon and Point tilesets from https://studio.mapbox.com/tilesets/
+    const polygonSource = {
+        url: "mapbox://tonyburrett.cleesq72z09gu2jntpegads3o-9lelm",
+        layerName: "Stockland_Nowra_Polygons"
+    }
+    const pointSource = {
+        url: "mapbox://tonyburrett.cleesr4oh01ge2plaut3jsqns-8lhpz",
+        layerName: "Stockland_Nowra_Points"
+    };
+    
+    // Set the starting extent
+    const center = [150.6072225,-34.8764647];
+    const zoom = 17;
+
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: mapboxStyle,
+        zoom: zoom,
+        center: center
+    });
+
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.NavigationControl({
+        showCompass: false
+    }));
+
+    map.on('load', () => {
+        // Load the tileset sources for points and polygons 
+        map.addSource('polygonSource', {
+            type: 'vector',
+            url: polygonSource.url
+        });
+        map.addSource('pointSource', {
+            type: 'vector',
+            url: pointSource.url
+        });
+
+        // Create layers from the above sources
+        map.addLayer({
+            'id': 'polygons',
+            'source': 'polygonSource',
+            'source-layer': polygonSource.layerName,
+            'type': 'line',
+            'layout': {},
+            'paint': {
+                'line-color': "#D5D7DB",
+                'line-opacity': 1,
+                'line-width': 2
+            }
+        });
+
+        map.addLayer({
+            'id': 'points',
+            'source': 'pointSource',
+            'source-layer': pointSource.layerName,
+            'type': 'symbol',
+            'layout': {
+                'text-field': ['get', 'Name'],
+                'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+                'text-offset': [0, 0.6],
+                'text-anchor': 'top',
+                'visibility': 'visible'
+            },
+            'paint': {
+                'text-halo-width': 2,
+                'text-halo-color': "white"
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
